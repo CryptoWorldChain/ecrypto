@@ -1,20 +1,45 @@
 
-version = '3.0.0'
+
+buildscript {
+	dependencies { 
+		classpath "onight.osgi:zpp-gradle:3.0.0"
+	 }
+}
+version = '3.1.0'
+
 repositories{
 	maven{ url "http://dl.bintray.com/ethereum/maven/"}
 }
+ 
 
-dependencies { 
+project.group='org.brewchain'
+
+apply plugin: 'zippo'
+
+dependencies {
 	//	 testCompile 'junit:junit:4.12'
-    includeInJar "com.madgag.spongycastle:core:1.54.0.0" // for SHA3 and SECP256K1
-    includeInJar "com.madgag.spongycastle:prov:1.54.0.0" // for SHA3 and SECP256K1
-	includeInJar 'org.ethereum:ethereumj-core:1.5.0-RELEASE'
-
+	compile ("org.fc.zippo:org.fc.zippo.oapi:3.3.0")
+	
+	// for SHA3 and SECP256K1
+    includeInJar "com.madgag.spongycastle:core:1.54.0.0"
+    includeInJar "com.madgag.spongycastle:prov:1.54.0.0"
+    
+    // 
+	includeInJar 'org.ethereum:ethereumj-core:1.4.3-RELEASE'
+	
+	
+	compile 'org.osgi:org.osgi.annotation:6.0.0'
+	
 }
+
 
 jar {
 	manifest{
 		//		attributes( 'Spring-Context': 'applicationContext-common.xml, applicationContext-beans.xml')
-		attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle')
+		attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle,org.ethereum.crypto')
+		//  attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle')
+		attributes( 'provider':'org.brewchain')
 	}
 }
+
+
