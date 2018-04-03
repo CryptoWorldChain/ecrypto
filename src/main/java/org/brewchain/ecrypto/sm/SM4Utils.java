@@ -160,10 +160,11 @@ public class SM4Utils {
 
 	public static void main(String[] args) 
 	{
-		String plainText = "ererfeiisgod";
+		String plainText = "beijing";
 
 		SM4Utils sm4 = new SM4Utils();
-		sm4.secretKey = "1111111111111112";  //meF8U9wHFOMfs2Y9
+		//meF8U9wHFOMfs2Y9
+		sm4.secretKey = "meF8U9wHFOMfs2Y9";  //meF8U9wHFOMfs2Y9
 		sm4.hexString = false;
 
 		System.out.println("ECB模式");
