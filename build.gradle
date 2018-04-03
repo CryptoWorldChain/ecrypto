@@ -60,6 +60,7 @@ dependencies {
     compile "org.springframework:spring-orm:${springVersion}"
     compile "com.typesafe:config:1.2.1"
     compile "com.googlecode.concurrent-locks:concurrent-locks:1.0.0"
+    complie "org.bouncycastle:bcprov-jdk15on:1.56"
 
     compile("com.googlecode.json-simple:json-simple:1.1.1") {
         exclude group: 'junit', module: 'junit'
