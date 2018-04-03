@@ -16,6 +16,15 @@ project.group='org.brewchain'
 
 apply plugin: 'zippo'
 
+ext {
+    slf4jVersion = '1.7.7'
+    leveldbVersion = '0.7'
+    scastleVersion = '1.53.0.0'
+    springVersion = '4.2.0.RELEASE'
+    hibernateVersion = '4.3.7.Final'
+    junitVersion = '4.11'
+}
+
 dependencies {
 	//	 testCompile 'junit:junit:4.12'
 	compile ("org.fc.zippo:org.fc.zippo.oapi:3.3.0")
@@ -24,8 +33,47 @@ dependencies {
     includeInJar "com.madgag.spongycastle:core:1.54.0.0"
     includeInJar "com.madgag.spongycastle:prov:1.54.0.0"
     
-    // 
-	includeInJar 'org.ethereum:ethereumj-core:1.6.3-RELEASE'
+    // ##################################
+	//includeInJar 'org.ethereum:ethereumj-core:1.6.3-RELEASE'
+	compile "io.netty:netty-all:4.0.30.Final"
+    compile "com.madgag.spongycastle:core:${scastleVersion}" // for SHA3 and SECP256K1
+    compile "com.madgag.spongycastle:prov:${scastleVersion}" // for SHA3 and SECP256K1
+
+    compile "org.iq80.leveldb:leveldb:${leveldbVersion}"     // Java API wrapper around native components
+
+    compile "org.ethereum:leveldbjni-all:1.18.3"             // native leveldb components
+
+    compile "org.ethereum:solcJ-all:0.4.8"                   // Solidity Compiler win/mac/linux binaries
+
+    compile "com.cedarsoftware:java-util:1.8.0" // for deep equals
+    compile "org.javassist:javassist:3.15.0-GA"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "ch.qos.logback:logback-classic:1.1.7"
+    compile "org.codehaus.jackson:jackson-mapper-asl:1.9.13"
+    compile "com.google.code.findbugs:jsr305:3.0.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.5.1"
+    compile "org.apache.commons:commons-collections4:4.0"
+    compile "org.apache.commons:commons-lang3:3.4"
+    compile "commons-codec:commons-codec:1.10"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-tx:${springVersion}"
+    compile "org.springframework:spring-orm:${springVersion}"
+    compile "com.typesafe:config:1.2.1"
+    compile "com.googlecode.concurrent-locks:concurrent-locks:1.0.0"
+
+    compile("com.googlecode.json-simple:json-simple:1.1.1") {
+        exclude group: 'junit', module: 'junit'
+    }
+
+    // used to hide spring initialization logs messages in samples
+    // optional "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "org.springframework:spring-test:${springVersion}"
+    testCompile "org.mockito:mockito-core:2.+"
+    testCompile "com.github.briandilley.jsonrpc4j:jsonrpc4j:1.1"
+    
+    // ##################################
 	
 	
 	compile 'org.osgi:org.osgi.annotation:6.0.0'
