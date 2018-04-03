@@ -5,7 +5,7 @@ buildscript {
 		classpath "onight.osgi:zpp-gradle:3.0.0"
 	 }
 }
-version = '3.0.0'
+version = '3.0.1'
 
 repositories{
 	maven{ url "http://dl.bintray.com/ethereum/maven/"}
@@ -75,6 +75,7 @@ dependencies {
     
     // ##################################
 	
+	compile "org.bouncycastle:bcprov-jdk15on:1.58"
 	
 	compile 'org.osgi:org.osgi.annotation:6.0.0'
 	
