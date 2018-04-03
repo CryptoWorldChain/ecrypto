@@ -25,7 +25,7 @@ dependencies {
     includeInJar "com.madgag.spongycastle:prov:1.54.0.0"
     
     // 
-	includeInJar 'org.ethereum:ethereumj-core:1.4.3-RELEASE'
+	includeInJar 'org.ethereum:ethereumj-core:1.6.3-RELEASE'
 	
 	
 	compile 'org.osgi:org.osgi.annotation:6.0.0'

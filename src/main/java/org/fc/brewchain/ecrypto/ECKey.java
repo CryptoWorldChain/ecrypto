@@ -36,7 +36,6 @@ package org.fc.brewchain.ecrypto;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -48,48 +47,41 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-//import java.security.spec.ECPoint;
-import org.spongycastle.math.ec.ECPoint;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPrivateKeySpec;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
-import javax.crypto.KeyAgreement;
 
 import org.ethereum.util.ByteUtil;
-import org.fc.brewchain.ecrypto.jce.ECKeyAgreement;
-import org.fc.brewchain.ecrypto.jce.ECKeyFactory;
 import org.fc.brewchain.ecrypto.jce.ECKeyPairGenerator;
 import org.fc.brewchain.ecrypto.jce.ECSignatureFactory;
 import org.fc.brewchain.ecrypto.jce.SpongyCastleProvider;
-import org.slf4j.LoggerFactory;
 import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.ASN1Integer;
 import org.spongycastle.asn1.DLSequence;
 import org.spongycastle.asn1.sec.SECNamedCurves;
 import org.spongycastle.asn1.x9.X9ECParameters;
 import org.spongycastle.asn1.x9.X9IntegerConverter;
-import org.spongycastle.crypto.agreement.ECDHBasicAgreement;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.engines.AESFastEngine;
 import org.spongycastle.crypto.modes.SICBlockCipher;
-import org.spongycastle.crypto.params.*;
+import org.spongycastle.crypto.params.ECDomainParameters;
+import org.spongycastle.crypto.params.ECPrivateKeyParameters;
+import org.spongycastle.crypto.params.ECPublicKeyParameters;
+import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.crypto.signers.ECDSASigner;
 import org.spongycastle.crypto.signers.HMacDSAKCalculator;
 import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
 import org.spongycastle.math.ec.ECAlgorithms;
 import org.spongycastle.math.ec.ECCurve;
+//import java.security.spec.ECPoint;
+import org.spongycastle.math.ec.ECPoint;
 import org.spongycastle.util.BigIntegers;
 import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.Hex;
 
-import scala.reflect.api.Constants;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Represents an elliptic curve public and (optionally) private key, usable for digital signatures but not encryption.
@@ -105,15 +97,13 @@ import scala.reflect.api.Constants;
  * See <a href="https://github.com/bitcoinj/bitcoinj/blob/master/core/src/main/java/com/google/bitcoin/core/ECKey.java">
  * bitcoinj on GitHub</a>.
  */
+@Slf4j
 public class ECKey implements Serializable {
 	
-    private static final Logger logger = LoggerFactory.getLogger(ECKey.class);
-
     /**
      * The parameters of the secp256k1 curve that Ethereum uses.
      */
     public static final ECDomainParameters CURVE;
-    public static final ECParameterSpec CURVE_SPEC;
 
     /**
      * Equal to CURVE.getN().shiftRight(1), used for canonicalising the S value of a signature.
@@ -132,9 +122,6 @@ public class ECKey implements Serializable {
         // All clients must agree on the curve to use by agreement. Ethereum uses secp256k1.
         X9ECParameters params = SECNamedCurves.getByName("secp256k1");
         CURVE = new ECDomainParameters(params.getCurve(), params.getG(), params.getN(), params.getH());
-        
-        // TODO ECParameterSpec(EllipticCurve curve, ECPoint g,BigInteger n, int h)
-        CURVE_SPEC = new ECParameterSpec(params.getCurve(), params.getG(), params.getN(), params.getH());
         
         HALF_CURVE_ORDER = params.getN().shiftRight(1);
         secureRandom = new SecureRandom();
@@ -245,35 +232,6 @@ public class ECKey implements Serializable {
         }
     }
 
-    /* Convert a BigInteger into a PrivateKey object
-     */
-    private static PrivateKey privateKeyFromBigInteger(BigInteger priv) {
-        if (priv == null) {
-            return null;
-        } else {
-            try {
-                return ECKeyFactory
-                    .getInstance(SpongyCastleProvider.getInstance())
-                    .generatePrivate(new ECPrivateKeySpec(priv, CURVE_SPEC));
-            } catch (InvalidKeySpecException ex) {
-                throw new AssertionError("Assumed correct key spec statically");
-            }
-        }
-    }
-
-    /**
-     * Pair a private key integer with a public EC point
-     *
-     * BouncyCastle will be used as the Java Security Provider
-     */
-    public ECKey(@Nullable BigInteger priv, ECPoint pub) {
-        this(
-            SpongyCastleProvider.getInstance(),
-            privateKeyFromBigInteger(priv),
-            pub
-        );
-    }
-
     /**
      * Utility for compressing an elliptic curve point. Returns the same point if it's already compressed.
      * See the ECKey class docs for a discussion of point compression.
@@ -298,80 +256,6 @@ public class ECKey implements Serializable {
      */
     public static ECPoint decompressPoint(ECPoint compressed) {
         return CURVE.getCurve().decodePoint(compressed.getEncoded(false));
-    }
-
-    /**
-     * Creates an ECKey given the private key only.
-     *
-     * @param privKey -
-     *
-     *
-     * @return  -
-     */
-    public static ECKey fromPrivate(BigInteger privKey) {
-        return new ECKey(privKey, CURVE.getG().multiply(privKey));
-    }
-
-    /**
-     * Creates an ECKey given the private key only.
-     *
-     * @param privKeyBytes -
-     *
-     * @return -
-     */
-    public static ECKey fromPrivate(byte[] privKeyBytes) {
-        return fromPrivate(new BigInteger(1, privKeyBytes));
-    }
-
-    /**
-     * Creates an ECKey that simply trusts the caller to ensure that point is really the result of multiplying the
-     * generator point by the private key. This is used to speed things up when you know you have the right values
-     * already. The compression state of pub will be preserved.
-     *
-     * @param priv -
-     * @param pub -
-     *
-     * @return  -
-     */
-    public static ECKey fromPrivateAndPrecalculatedPublic(BigInteger priv, ECPoint pub) {
-        return new ECKey(priv, pub);
-    }
-
-    /**
-     * Creates an ECKey that simply trusts the caller to ensure that point is really the result of multiplying the
-     * generator point by the private key. This is used to speed things up when you know you have the right values
-     * already. The compression state of the point will be preserved.
-     *
-     * @param priv -
-     * @param pub -
-     * @return -
-     */
-    public static ECKey fromPrivateAndPrecalculatedPublic(byte[] priv, byte[] pub) {
-        check(priv != null, "Private key must not be null");
-        check(pub != null, "Public key must not be null");
-        return new ECKey(new BigInteger(1, priv), CURVE.getCurve().decodePoint(pub));
-    }
-
-    /**
-     * Creates an ECKey that cannot be used for signing, only verifying signatures, from the given point. The
-     * compression state of pub will be preserved.
-     *
-     * @param pub -
-     * @return -
-     */
-    public static ECKey fromPublicOnly(ECPoint pub) {
-        return new ECKey(null, pub);
-    }
-
-    /**
-     * Creates an ECKey that cannot be used for signing, only verifying signatures, from the given encoded point.
-     * The compression state of pub will be preserved.
-     *
-     * @param pub -
-     * @return -
-     */
-    public static ECKey fromPublicOnly(byte[] pub) {
-        return new ECKey(null, CURVE.getCurve().decodePoint(pub));
     }
 
     /**
@@ -485,19 +369,6 @@ public class ECKey implements Serializable {
             nodeId  = pubBytesWithoutFormat(this.pub);
         }
         return nodeId;
-    }
-
-    /**
-     * Recover the public key from an encoded node id.
-     *
-     * @param nodeId a 64-byte X,Y point pair
-     */
-    public static ECKey fromNodeId(byte[] nodeId) {
-        check(nodeId.length == 64, "Expected a 64 byte node id");
-        byte[] pubBytes = new byte[65];
-        System.arraycopy(nodeId, 0, pubBytes, 1, nodeId.length);
-        pubBytes[0] = 0x04; // uncompressed
-        return ECKey.fromPublicOnly(pubBytes);
     }
 
     /**
@@ -615,23 +486,6 @@ public class ECKey implements Serializable {
             return signature;
         }
 
-        public boolean validateComponents() {
-            return validateComponents(r, s, v);
-        }
-
-        public static boolean validateComponents(BigInteger r, BigInteger s, byte v) {
-
-            if (v != 27 && v != 28) return false;
-
-            if (isLessThan(r, BigInteger.ONE)) return false;
-            if (isLessThan(s, BigInteger.ONE)) return false;
-
-            if (!isLessThan(r, Constants.getSECP256K1N())) return false;
-            if (!isLessThan(s, Constants.getSECP256K1N())) return false;
-
-            return true;
-        }
-
         public static ECDSASignature decodeFromDER(byte[] bytes) {
             ASN1InputStream decoder = null;
             try {
@@ -677,18 +531,6 @@ public class ECKey implements Serializable {
             } else {
                 return this;
             }
-        }
-
-        /**
-         *
-         * @return -
-         */
-        public String toBase64() {
-            byte[] sigData = new byte[65];  // 1 header + 32 bytes for R + 32 bytes for S
-            sigData[0] = v;
-            System.arraycopy(bigIntegerToBytes(this.r, 32), 0, sigData, 1, 32);
-            System.arraycopy(bigIntegerToBytes(this.s, 32), 0, sigData, 33, 32);
-            return new String(Base64.encode(sigData), Charset.forName("UTF-8"));
         }
 
         public byte[] toByteArray() {
@@ -858,53 +700,6 @@ public class ECKey implements Serializable {
     }
 
     /**
-     * Compute the key that signed the given signature.
-     *
-     * @param messageHash 32-byte hash of message
-     * @param signatureBase64 Base-64 encoded signature
-     * @return ECKey
-     */
-    public static ECKey signatureToKey(byte[] messageHash, String signatureBase64) throws SignatureException {
-        final byte[] keyBytes = signatureToKeyBytes(messageHash, signatureBase64);
-        return ECKey.fromPublicOnly(keyBytes);
-    }
-
-    /**
-     * Compute the key that signed the given signature.
-     *
-     * @param messageHash 32-byte hash of message
-     * @param sig -
-     * @return ECKey
-     */
-    public static ECKey signatureToKey(byte[] messageHash, ECDSASignature sig) throws SignatureException {
-        final byte[] keyBytes = signatureToKeyBytes(messageHash, sig);
-        return ECKey.fromPublicOnly(keyBytes);
-    }
-
-
-    public BigInteger keyAgreement(ECPoint otherParty) {
-        if (privKey == null) {
-            throw new MissingPrivateKeyException();
-        } else if (privKey instanceof BCECPrivateKey) {
-            final ECDHBasicAgreement agreement = new ECDHBasicAgreement();
-            agreement.init(new ECPrivateKeyParameters(((BCECPrivateKey) privKey).getD(), CURVE));
-            return agreement.calculateAgreement(new ECPublicKeyParameters(otherParty, CURVE));
-        } else {
-            try {
-                final KeyAgreement agreement = ECKeyAgreement.getInstance(this.provider);
-                agreement.init(this.privKey);
-                agreement.doPhase(
-                    ECKeyFactory.getInstance(this.provider)
-                        .generatePublic(new ECPublicKeySpec(otherParty, CURVE_SPEC)),
-                        /* lastPhase */ true);
-                return new BigInteger(1, agreement.generateSecret());
-            } catch (IllegalStateException | InvalidKeyException | InvalidKeySpecException ex) {
-                throw new RuntimeException("ECDH key agreement failure", ex);
-            }
-        }
-    }
-
-    /**
      * Decrypt cipher by AES in SIC(also know as CTR) mode
      *
      * @param cipher -proper cipher
@@ -972,7 +767,7 @@ public class ECKey implements Serializable {
         } catch (NullPointerException npe) {
             // Bouncy Castle contains a bug that can cause NPEs given specially crafted signatures.
             // Those signatures are inherently invalid/attack sigs so we just fail them here rather than crash the thread.
-            logger.error("Caught NPE inside bouncy castle", npe);
+            log.error("Caught NPE inside bouncy castle", npe);
             return false;
         }
     }
@@ -1131,24 +926,6 @@ public class ECKey implements Serializable {
     }
 
     /**
-     *
-     * @param recId Which possible key to recover.
-     * @param sig the R and S components of the signature, wrapped.
-     * @param messageHash Hash of the data that was signed.
-     * @return ECKey
-     */
-    @Nullable
-    public static ECKey recoverFromSignature(int recId, ECDSASignature sig, byte[] messageHash) {
-        final byte[] pubBytes = recoverPubBytesFromSignature(recId, sig, messageHash);
-        if (pubBytes == null) {
-            return null;
-        } else {
-            return ECKey.fromPublicOnly(pubBytes);
-        }
-    }
-
-
-    /**
      * Decompress a compressed public key (x co-ord and low-bit of y-coord).
      *
      * @param xBN -
@@ -1160,22 +937,6 @@ public class ECKey implements Serializable {
         byte[] compEnc = x9.integerToBytes(xBN, 1 + x9.getByteLength(CURVE.getCurve()));
         compEnc[0] = (byte) (yBit ? 0x03 : 0x02);
         return CURVE.getCurve().decodePoint(compEnc);
-    }
-
-    /**
-     * Returns a 32 byte array containing the private key, or null if the key is encrypted or public only
-     *
-     *  @return  -
-     */
-    @Nullable
-    public byte[] getPrivKeyBytes() {
-        if (privKey == null) {
-            return null;
-        } else if (privKey instanceof BCECPrivateKey) {
-            return bigIntegerToBytes(((BCECPrivateKey) privKey).getD(), 32);
-        } else {
-            return null;
-        }
     }
 
     @Override
