@@ -19,7 +19,7 @@ package org.fc.brewchain.ecrypto.zksnark;
 
 import java.math.BigInteger;
 
-import static org.ethereum.crypto.zksnark.Params.P;
+import static org.fc.brewchain.ecrypto.zksnark.Params.P;
 
 /**
  * Arithmetic in F_p, p = 21888242871839275222246405745257275088696311157297823662689037894645226208583

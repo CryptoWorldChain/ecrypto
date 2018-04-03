@@ -17,7 +17,7 @@
  */
 package org.fc.brewchain.ecrypto.zksnark;
 
-import static org.ethereum.crypto.zksnark.Params.B_Fp;
+import static org.fc.brewchain.ecrypto.zksnark.Params.B_Fp;
 
 /**
  * Definition of {@link BN128} over F_p, where "p" equals {@link Params#P} <br/>

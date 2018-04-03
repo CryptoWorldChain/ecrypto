@@ -48,10 +48,12 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+//import java.security.spec.ECPoint;
+import org.spongycastle.math.ec.ECPoint;
 import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
+import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -104,6 +106,7 @@ import scala.reflect.api.Constants;
  * bitcoinj on GitHub</a>.
  */
 public class ECKey implements Serializable {
+	
     private static final Logger logger = LoggerFactory.getLogger(ECKey.class);
 
     /**
@@ -129,7 +132,10 @@ public class ECKey implements Serializable {
         // All clients must agree on the curve to use by agreement. Ethereum uses secp256k1.
         X9ECParameters params = SECNamedCurves.getByName("secp256k1");
         CURVE = new ECDomainParameters(params.getCurve(), params.getG(), params.getN(), params.getH());
+        
+        // TODO ECParameterSpec(EllipticCurve curve, ECPoint g,BigInteger n, int h)
         CURVE_SPEC = new ECParameterSpec(params.getCurve(), params.getG(), params.getN(), params.getH());
+        
         HALF_CURVE_ORDER = params.getN().shiftRight(1);
         secureRandom = new SecureRandom();
     }

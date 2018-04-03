@@ -19,7 +19,7 @@ package org.fc.brewchain.ecrypto.zksnark;
 
 import java.math.BigInteger;
 
-import static org.ethereum.crypto.zksnark.Params.B_Fp2;
+import static org.fc.brewchain.ecrypto.zksnark.Params.B_Fp2;
 
 /**
  * Definition of {@link BN128} over F_p2, where "p" equals {@link Params#P} <br/>

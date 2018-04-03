@@ -17,11 +17,11 @@
  */
 package org.fc.brewchain.ecrypto.zksnark;
 
-import java.math.BigInteger;
+import static org.fc.brewchain.ecrypto.zksnark.Params.R;
+import static org.fc.brewchain.ecrypto.zksnark.Params.TWIST_MUL_BY_P_X;
+import static org.fc.brewchain.ecrypto.zksnark.Params.TWIST_MUL_BY_P_Y;
 
-import static org.ethereum.crypto.zksnark.Params.R;
-import static org.ethereum.crypto.zksnark.Params.TWIST_MUL_BY_P_X;
-import static org.ethereum.crypto.zksnark.Params.TWIST_MUL_BY_P_Y;
+import java.math.BigInteger;
 
 /**
  * Implementation of specific cyclic subgroup of points belonging to {@link BN128Fp2} <br/>
