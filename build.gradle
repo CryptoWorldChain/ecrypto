@@ -5,7 +5,7 @@ buildscript {
 		classpath "onight.osgi:zpp-gradle:3.0.0"
 	 }
 }
-version = '3.1.0'
+version = '3.0.0'
 
 repositories{
 	maven{ url "http://dl.bintray.com/ethereum/maven/"}
@@ -84,7 +84,10 @@ dependencies {
 jar {
 	manifest{
 		//		attributes( 'Spring-Context': 'applicationContext-common.xml, applicationContext-beans.xml')
-		attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle,org.ethereum.crypto')
+		// attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle,org.ethereum.crypto')
+		
+		attributes( 'Import-Ignore':'com.fasterxml.jackson,ch.qos.logback,org.spongycastle,org.springframework,io.netty,com.google.common,com.typesafe.config,com.cedarsoftware.util,org.apache.commons.collections4,com.googlecode.concurentlocks,org.fusesource.leveldbjni,org.iq80.leveldb' )
+		
 		//  attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle')
 		attributes( 'provider':'org.brewchain')
 	}
