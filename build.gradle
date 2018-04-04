@@ -87,7 +87,7 @@ jar {
 		//		attributes( 'Spring-Context': 'applicationContext-common.xml, applicationContext-beans.xml')
 		// attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle,org.ethereum.crypto')
 		
-		attributes( 'Import-Ignore':'com.fasterxml.jackson,ch.qos.logback,org.spongycastle,org.springframework,io.netty,com.google.common,com.typesafe.config,com.cedarsoftware.util,org.apache.commons.collections4,com.googlecode.concurentlocks,org.fusesource.leveldbjni,org.iq80.leveldb' )
+		attributes( 'Import-Ignore':'com.fasterxml.jackson,ch.qos.logback,org.spongycastle,org.springframework,io.netty,com.google.common,com.typesafe.config,com.cedarsoftware.util,org.apache.commons.collections4,com.googlecode.concurentlocks,org.fusesource.leveldbjni,org.iq80.leveldb,org.bouncycastle.jcajce.provider.digest' )
 		
 		//  attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle')
 		attributes( 'provider':'org.brewchain')
