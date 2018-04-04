@@ -4,11 +4,6 @@ import java.util.regex.Pattern;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-/**
- * Email: king.camulos@gmail.com
- * Date: 2018/4/3
- * DESC:
- */
 public class SM4Utils {
     private String secretKey = "";
     private String iv = "";

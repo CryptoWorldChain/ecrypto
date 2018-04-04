@@ -1,27 +1,21 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.net.p2p;
+
+import static org.brewchain.core.net.eth.EthVersion.fromCode;
+import static org.brewchain.core.net.message.StaticMessages.PING_MESSAGE;
+import static org.brewchain.core.net.message.StaticMessages.PONG_MESSAGE;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import org.brewchain.core.config.SystemProperties;
 import org.brewchain.core.core.Block;
 import org.brewchain.core.core.Transaction;
 import org.brewchain.core.listener.EthereumListener;
-import org.brewchain.core.manager.WorldManager;
 import org.brewchain.core.net.MessageQueue;
 import org.brewchain.core.net.client.Capability;
 import org.brewchain.core.net.client.ConfigCapabilities;
@@ -31,30 +25,16 @@ import org.brewchain.core.net.message.ReasonCode;
 import org.brewchain.core.net.message.StaticMessages;
 import org.brewchain.core.net.server.Channel;
 import org.brewchain.core.net.shh.ShhHandler;
-
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import org.brewchain.core.net.swarm.Util;
 import org.brewchain.core.net.swarm.bzz.BzzHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.*;
-
-import static org.brewchain.core.net.eth.EthVersion.*;
-import static org.brewchain.core.net.message.StaticMessages.*;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * Process the basic protocol messages between every peer on the network.

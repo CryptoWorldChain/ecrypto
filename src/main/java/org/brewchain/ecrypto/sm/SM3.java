@@ -1,10 +1,5 @@
 package org.brewchain.ecrypto.sm;
 
-/**
- * Email: king.camulos@gmail.com
- * Date: 2018/4/3
- * DESC:
- */
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;

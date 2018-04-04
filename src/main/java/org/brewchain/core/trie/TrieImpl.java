@@ -1,37 +1,4 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.trie;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.apache.commons.lang3.text.StrBuilder;
-import org.brewchain.core.crypto.HashUtil;
-import org.brewchain.core.datasource.Source;
-import org.brewchain.core.datasource.inmem.HashMapDB;
-import org.brewchain.core.datasource.inmem.HashMapDBSimple;
-import org.brewchain.core.net.swarm.Key;
-import org.brewchain.core.util.FastByteComparisons;
-import org.brewchain.core.util.RLP;
-import org.brewchain.core.util.Value;
-import org.spongycastle.util.encoders.Hex;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
 
 import static org.apache.commons.lang3.concurrent.ConcurrentUtils.constantFuture;
 import static org.brewchain.core.crypto.HashUtil.EMPTY_TRIE_HASH;
@@ -40,9 +7,24 @@ import static org.brewchain.core.util.RLP.EMPTY_ELEMENT_RLP;
 import static org.brewchain.core.util.RLP.encodeElement;
 import static org.brewchain.core.util.RLP.encodeList;
 
-/**
- * Created by Anton Nashatyrev on 07.02.2017.
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import org.apache.commons.lang3.text.StrBuilder;
+import org.brewchain.core.crypto.HashUtil;
+import org.brewchain.core.datasource.Source;
+import org.brewchain.core.datasource.inmem.HashMapDB;
+import org.brewchain.core.util.FastByteComparisons;
+import org.brewchain.core.util.RLP;
+import org.spongycastle.util.encoders.Hex;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 public class TrieImpl implements Trie<byte[]> {
     private final static Object NULL_NODE = new Object();
     private final static int MIN_BRANCHES_CONCURRENTLY = 3;

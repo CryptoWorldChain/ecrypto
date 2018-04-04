@@ -1,25 +1,11 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.net.swarm.bzz;
 
-import com.google.common.base.Joiner;
-import org.apache.commons.codec.binary.StringUtils;
-import org.brewchain.core.net.p2p.Peer;
+import static org.brewchain.core.crypto.HashUtil.sha3;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
 import org.brewchain.core.net.rlpx.Node;
 import org.brewchain.core.net.swarm.Key;
 import org.brewchain.core.net.swarm.Util;
@@ -28,16 +14,9 @@ import org.brewchain.core.util.RLP;
 import org.brewchain.core.util.RLPList;
 import org.spongycastle.util.encoders.Hex;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-
-import static org.brewchain.core.crypto.HashUtil.sha3;
-
 /**
  * Class similar for {@link Node} used in the swarm
  *
- * Created by Admin on 25.06.2015.
  */
 public class PeerAddress {
     private byte[] ip;

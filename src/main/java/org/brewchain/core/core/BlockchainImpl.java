@@ -1,20 +1,3 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.core;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -93,9 +76,6 @@ import static org.brewchain.core.util.BIUtil.isMoreThan;
  * </ol>
  * See <a href="https://github.com/ethereum/wiki/wiki/White-Paper#blockchain-and-mining">Ethereum Whitepaper</a>
  *
- * @author Roman Mandeleil
- * @author Nick Savers
- * @since 20.05.2014
  */
 @Component
 public class BlockchainImpl implements Blockchain, org.brewchain.core.facade.Blockchain {

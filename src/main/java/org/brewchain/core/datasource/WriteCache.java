@@ -1,20 +1,3 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.datasource;
 
 import com.googlecode.concurentlocks.ReadWriteUpdateLock;
@@ -39,8 +22,6 @@ import java.util.Map;
  * Counting Source acts like {@link HashedKeySource} and makes sense only for data
  * where a single key always corresponds to a single value
  * Counting cache normally used as backing store for Trie data structure
- *
- * Created by Anton Nashatyrev on 11.11.2016.
  */
 public class WriteCache<Key, Value> extends AbstractCachedSource<Key, Value> {
 

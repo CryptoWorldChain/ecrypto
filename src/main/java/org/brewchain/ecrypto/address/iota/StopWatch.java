@@ -1,8 +1,5 @@
 package org.brewchain.ecrypto.address.iota;
 
-/**
- * @author adrian
- */
 public class StopWatch {
 
     private long startTime = 0;
