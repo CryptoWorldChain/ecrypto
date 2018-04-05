@@ -1,8 +1,5 @@
 package org.brewchain.ecrypto.address.iota;
 
-/**
- * Created by paul on 7/27/17.
- */
 public abstract class SpongeFactory {
     public static ICurl create(Mode mode) {
         switch (mode) {

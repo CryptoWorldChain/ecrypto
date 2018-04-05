@@ -1,31 +1,22 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.net;
 
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
+import static org.brewchain.core.net.message.StaticMessages.DISCONNECT_MESSAGE;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.brewchain.core.listener.EthereumListener;
 import org.brewchain.core.net.eth.message.EthMessage;
 import org.brewchain.core.net.message.Message;
 import org.brewchain.core.net.message.ReasonCode;
 import org.brewchain.core.net.p2p.DisconnectMessage;
 import org.brewchain.core.net.p2p.PingMessage;
-import org.brewchain.core.net.p2p.PongMessage;
 import org.brewchain.core.net.server.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Queue;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.brewchain.core.net.message.StaticMessages.DISCONNECT_MESSAGE;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * This class contains the logic for sending messages in a queue
@@ -52,7 +40,6 @@ import static org.brewchain.core.net.message.StaticMessages.DISCONNECT_MESSAGE;
  * The following messages will not be answered:
  *      PONG, PEERS, HELLO, STATUS, TRANSACTIONS, BLOCKS
  *
- * @author Roman Mandeleil
  */
 @Component
 @Scope("prototype")

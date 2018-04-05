@@ -3,7 +3,6 @@ package org.brewchain.ecrypto.address.iota;
 /**
  * This interface abstracts the curl hashing algorithm.
  *
- * @author Adrian
  */
 public interface ICurl {
 

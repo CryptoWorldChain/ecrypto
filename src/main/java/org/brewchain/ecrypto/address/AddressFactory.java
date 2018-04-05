@@ -1,8 +1,5 @@
 package org.brewchain.ecrypto.address;
 
-/**
- * Created by paul on 7/27/17.
- */
 public abstract class AddressFactory {
     public static NewAddress create(Mode mode) {
         switch (mode) {

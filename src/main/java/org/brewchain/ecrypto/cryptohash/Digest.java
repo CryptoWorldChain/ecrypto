@@ -1,4 +1,3 @@
-
 package org.brewchain.ecrypto.cryptohash;
 
 public interface Digest{

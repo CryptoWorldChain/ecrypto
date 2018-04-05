@@ -1,35 +1,34 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.manager;
 
+import static org.brewchain.core.crypto.HashUtil.EMPTY_TRIE_HASH;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import javax.annotation.PostConstruct;
+
 import org.brewchain.core.config.SystemProperties;
-import org.brewchain.core.core.*;
+import org.brewchain.core.core.Block;
+import org.brewchain.core.core.BlockSummary;
+import org.brewchain.core.core.Blockchain;
+import org.brewchain.core.core.EventDispatchThread;
+import org.brewchain.core.core.Genesis;
+import org.brewchain.core.core.PendingState;
+import org.brewchain.core.core.Repository;
+import org.brewchain.core.core.TransactionExecutionSummary;
+import org.brewchain.core.core.TransactionReceipt;
 import org.brewchain.core.db.BlockStore;
-import org.brewchain.core.db.ByteArrayWrapper;
 import org.brewchain.core.db.DbFlushManager;
 import org.brewchain.core.listener.CompositeEthereumListener;
 import org.brewchain.core.listener.EthereumListener;
 import org.brewchain.core.net.client.PeerClient;
+import org.brewchain.core.net.rlpx.discover.NodeManager;
 import org.brewchain.core.net.rlpx.discover.UDPListener;
+import org.brewchain.core.net.server.ChannelManager;
 import org.brewchain.core.sync.FastSyncManager;
 import org.brewchain.core.sync.SyncManager;
-import org.brewchain.core.net.rlpx.discover.NodeManager;
-import org.brewchain.core.net.server.ChannelManager;
 import org.brewchain.core.sync.SyncPool;
 import org.brewchain.core.util.Utils;
 import org.slf4j.Logger;
@@ -39,19 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import static org.brewchain.core.crypto.HashUtil.EMPTY_TRIE_HASH;
-
 /**
  * WorldManager is a singleton containing references to different parts of the system.
- *
- * @author Roman Mandeleil
- * @since 01.06.2014
  */
 @Component
 public class WorldManager {
