@@ -1,9 +1,11 @@
 package org.brewchain.ecrypto.sm;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.brewchain.core.crypto.ECKey;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /**
  * Email: king.camulos@gmail.com
  * Date: 2018/4/3
@@ -160,7 +162,7 @@ public class SM4Utils {
 
 	public static void main(String[] args) 
 	{
-		String plainText = "beijing";
+		String plainText = "beijinG";
 
 		SM4Utils sm4 = new SM4Utils();
 		//meF8U9wHFOMfs2Y9
@@ -184,6 +186,11 @@ public class SM4Utils {
 
 		plainText = sm4.decryptData_CBC(cipherText);
 		System.out.println("明文: " + plainText);
+        ECKey ecKey=new ECKey();
+        //签名
+        //org.fc.brewchain.bcapi.crypto.EncHelper.ecSign()
+        //验签
+        //org.fc.brewchain.bcapi.crypto.EncHelper.ecSign()
 	}
 
     /**加密*/
