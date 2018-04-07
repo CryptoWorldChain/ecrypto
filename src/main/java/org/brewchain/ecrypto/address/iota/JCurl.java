@@ -3,11 +3,6 @@ package org.brewchain.ecrypto.address.iota;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-/**
- * (c) 2016 Come-from-Beyond
- *
- * JCurl belongs to the sponge function family.
- */
 public class JCurl implements ICurl {
 
     /**

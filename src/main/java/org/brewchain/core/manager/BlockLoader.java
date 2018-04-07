@@ -1,43 +1,33 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.manager;
 
 
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
+
 import org.brewchain.core.config.SystemProperties;
-import org.brewchain.core.core.*;
+import org.brewchain.core.core.Block;
+import org.brewchain.core.core.BlockHeader;
+import org.brewchain.core.core.BlockchainImpl;
+import org.brewchain.core.core.ImportResult;
+import org.brewchain.core.core.Transaction;
 import org.brewchain.core.db.DbFlushManager;
-import org.brewchain.core.util.*;
+import org.brewchain.core.util.ExecutorPipeline;
+import org.brewchain.core.util.Functional;
+import org.brewchain.core.util.RLP;
+import org.brewchain.core.util.RLPElement;
+import org.brewchain.core.util.RLPList;
 import org.brewchain.core.validator.BlockHeaderValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.*;
 
 @Component
 public class BlockLoader {

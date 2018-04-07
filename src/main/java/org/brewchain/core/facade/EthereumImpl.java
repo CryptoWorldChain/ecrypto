@@ -1,29 +1,25 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.facade;
 
-import org.apache.commons.lang3.ArrayUtils;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.brewchain.core.config.BlockchainConfig;
 import org.brewchain.core.config.CommonConfig;
 import org.brewchain.core.config.SystemProperties;
-import org.brewchain.core.core.*;
+import org.brewchain.core.core.Block;
+import org.brewchain.core.core.BlockSummary;
+import org.brewchain.core.core.CallTransaction;
+import org.brewchain.core.core.ImportResult;
 import org.brewchain.core.core.PendingState;
 import org.brewchain.core.core.Repository;
+import org.brewchain.core.core.Transaction;
+import org.brewchain.core.core.TransactionExecutionSummary;
+import org.brewchain.core.core.TransactionReceipt;
 import org.brewchain.core.crypto.ECKey;
 import org.brewchain.core.listener.CompositeEthereumListener;
 import org.brewchain.core.listener.EthereumListener;
@@ -53,16 +49,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.FutureAdapter;
 
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-/**
- * @author Roman Mandeleil
- * @since 27.07.2014
- */
 @Component
 public class EthereumImpl implements Ethereum, SmartLifecycle {
 

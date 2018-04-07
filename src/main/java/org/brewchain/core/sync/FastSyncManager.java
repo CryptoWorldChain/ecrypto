@@ -1,30 +1,35 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.sync;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import static org.brewchain.core.listener.EthereumListener.SyncState.COMPLETE;
+import static org.brewchain.core.listener.EthereumListener.SyncState.SECURE;
+import static org.brewchain.core.listener.EthereumListener.SyncState.UNSECURE;
+import static org.brewchain.core.util.CompactEncoder.hasTerminator;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.brewchain.core.config.SystemProperties;
-import org.brewchain.core.core.*;
+import org.brewchain.core.core.AccountState;
+import org.brewchain.core.core.Block;
+import org.brewchain.core.core.BlockHeader;
+import org.brewchain.core.core.BlockIdentifier;
+import org.brewchain.core.core.BlockchainImpl;
 import org.brewchain.core.crypto.HashUtil;
-import org.brewchain.core.datasource.BloomFilter;
 import org.brewchain.core.datasource.DbSource;
 import org.brewchain.core.db.DbFlushManager;
 import org.brewchain.core.db.IndexedBlockStore;
@@ -38,7 +43,10 @@ import org.brewchain.core.net.eth.handler.Eth63;
 import org.brewchain.core.net.message.ReasonCode;
 import org.brewchain.core.net.rlpx.discover.NodeHandler;
 import org.brewchain.core.net.server.Channel;
-import org.brewchain.core.util.*;
+import org.brewchain.core.util.ByteArrayMap;
+import org.brewchain.core.util.FastByteComparisons;
+import org.brewchain.core.util.Functional;
+import org.brewchain.core.util.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
@@ -47,18 +55,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.*;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
-import static org.brewchain.core.listener.EthereumListener.SyncState.COMPLETE;
-import static org.brewchain.core.listener.EthereumListener.SyncState.SECURE;
-import static org.brewchain.core.listener.EthereumListener.SyncState.UNSECURE;
-import static org.brewchain.core.util.CompactEncoder.hasTerminator;
-
-/**
- * Created by Anton Nashatyrev on 24.10.2016.
- */
 @Component
 public class FastSyncManager {
     private final static Logger logger = LoggerFactory.getLogger("sync");

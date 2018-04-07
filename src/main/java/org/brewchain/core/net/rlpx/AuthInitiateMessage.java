@@ -1,36 +1,15 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.net.rlpx;
-
-import org.brewchain.core.crypto.ECKey;
-import org.spongycastle.math.ec.ECPoint;
-import org.spongycastle.util.BigIntegers;
-import org.spongycastle.util.encoders.Hex;
-
-import java.util.Arrays;
 
 import static org.brewchain.core.util.ByteUtil.merge;
 import static org.spongycastle.util.BigIntegers.asUnsignedByteArray;
 
+import org.brewchain.core.crypto.ECKey;
+import org.spongycastle.math.ec.ECPoint;
+import org.spongycastle.util.encoders.Hex;
+
 /**
  * Authentication initiation message, to be wrapped inside
  *
- * Created by devrandom on 2015-04-07.
  */
 public class AuthInitiateMessage {
     ECKey.ECDSASignature signature; // 65 bytes

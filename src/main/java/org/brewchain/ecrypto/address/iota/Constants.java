@@ -3,7 +3,6 @@ package org.brewchain.ecrypto.address.iota;
 /**
  * This class defines the global constants.
  *
- * @author pinpong
  */
 public class Constants {
 

@@ -1,79 +1,17 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
-/*
- *      Copyright (C) 2016 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
-//Parts of this file are copyrighted by Vedant Kumar <vsk@berkeley.edu>
-//https://github.com/aweisberg/quotient-filter/commit/54539e6e287c7f68139733c65ecc4873e2872d54
-/*
- * qf.c
- *
- * Copyright (c) 2014 Vedant Kumar <vsk@berkeley.edu>
- */
-/*
-        Copyright (c) 2014 Vedant Kumar <vsk@berkeley.edu>
-
-        Permission is hereby granted, free of charge, to any person obtaining a
-        copy of this software and associated documentation files (the
-        "Software"), to deal in the Software without restriction, including
-        without limitation the rights to use, copy, modify, merge, publish,
-        distribute, sublicense, and/or sell copies of the Software, and to
-        permit persons to whom the Software is furnished to do so, subject to
-        the following conditions:
-
-        The above copyright notice and this permission notice shall be included
-        in all copies or substantial portions of the Software.  THE SOFTWARE IS
-        PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-        INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-        FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-        FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-        DEALINGS IN THE SOFTWARE.
-*/
 package org.brewchain.core.datasource;
 
-import com.google.common.base.Preconditions;
-import com.google.common.math.LongMath;
-import com.google.common.primitives.Ints;
-import org.brewchain.core.util.ByteUtil;
+import static java.lang.System.arraycopy;
+import static java.util.Arrays.copyOfRange;
+import static org.brewchain.core.util.ByteUtil.byteArrayToLong;
+import static org.brewchain.core.util.ByteUtil.longToBytes;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static java.lang.System.arraycopy;
-import static java.lang.System.in;
-import static java.util.Arrays.copyOfRange;
-import static org.brewchain.core.util.ByteUtil.byteArrayToLong;
-import static org.brewchain.core.util.ByteUtil.longToBytes;
+import com.google.common.base.Preconditions;
+import com.google.common.math.LongMath;
+import com.google.common.primitives.Ints;
 
 //import net.jpountz.xxhash.XXHashFactory;
 

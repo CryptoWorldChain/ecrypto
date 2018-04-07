@@ -3,11 +3,6 @@ package org.brewchain.ecrypto.sm;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-/**
- * Email: king.camulos@gmail.com
- * Date: 2018/4/3
- * DESC: https://github.com/SmartXiaoMing001/Chinese-Cipher-Of-SM2-SM3-SM4
- */
 public class SM4 {
     public static final int SM4_ENCRYPT = 1;
 

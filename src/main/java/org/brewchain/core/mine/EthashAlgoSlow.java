@@ -1,20 +1,3 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.brewchain.core.mine;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,7 +20,6 @@ import static org.spongycastle.util.Arrays.reverse;
  * This is the non-optimized Ethash implementation. It is left here for reference only
  * since the non-optimized version is slightly better for understanding the Ethash algorithm
  *
- * Created by Anton Nashatyrev on 27.11.2015.
  * @deprecated Use a faster version {@link EthashAlgo}, this class is for reference only
  */
 public class EthashAlgoSlow {
