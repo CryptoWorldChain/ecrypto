@@ -1,7 +1,7 @@
 package org.brewchain.ecrypto.address;
 
 public abstract class AddressFactory {
-    public static NewAddress create(Mode mode) {
+    public static NewAddress create(AddressEnum mode) {
         switch (mode) {
             case IOTA:
                 return new IoTANewAddress();
@@ -10,9 +10,4 @@ public abstract class AddressFactory {
         }
     }
 
-    public enum Mode {
-    		IOTA
-    		//,ETH
-        //,BTH
-    }
 }

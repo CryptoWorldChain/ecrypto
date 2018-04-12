@@ -1,7 +1,10 @@
 package org.brewchain.ecrypto.address;
 
+import java.security.SecureRandom;
 import java.util.List;
 
+import org.bouncycastle.util.encoders.Hex;
+import org.brewchain.core.crypto.ECKey;
 import org.brewchain.ecrypto.address.AddressFactory;
 import org.brewchain.ecrypto.address.NewAddress;
 
@@ -23,12 +26,25 @@ public class TestNewAddr {
 	
 	public static void main(String[] args) throws Exception {
 
+		SecureRandom ran = new SecureRandom();
+		ECKey eckey = new ECKey(ran);
+		System.out.println(Hex.toHexString(eckey.getAddress()));
+		System.out.println(Hex.toHexString(eckey.getPrivKeyBytes()));
+		System.out.println(Hex.toHexString(eckey.getPubKey()));
+		
+		System.out.println(Hex.toHexString(ECKey.fromPrivate(eckey.getPrivKeyBytes()).getAddress()));
+		
+		
+		
+		System.exit(0);
+		
 		String private_key = randomPK(81);
 		
-		org.brewchain.ecrypto.address.NewAddress newAddr = org.brewchain.ecrypto.address.AddressFactory.create(org.brewchain.ecrypto.address.AddressFactory.Mode.IOTA);
+		org.brewchain.ecrypto.address.NewAddress newAddr = 
+				org.brewchain.ecrypto.address.AddressFactory.create(org.brewchain.ecrypto.address.AddressEnum.IOTA);
 		
 		log.info("pri="+private_key);
-		List<String> addr = newAddr.getNewAddress(private_key, 2, 0, false, 1, true);
+		List<String> addr = newAddr.newAddress(private_key, 2, 0, false, 1, true);
 		for(int i=0;i<addr.size();i++) {
 			log.info("addr.get("+i+")="+addr.get(i));
 		}
@@ -37,7 +53,7 @@ public class TestNewAddr {
 		log.info("");
 		log.info("pri="+private_key);
 		private_key = "NDIICQCKUMCBXUGTIUZCCTYRMYVISHFGVEJDLVDODS9TELXS9YGSNSXDJTNTZUZJOJNBTYLPGIFUXVHKH";
-		addr = newAddr.getNewAddress(private_key, 2, 0, false, 5, true);
+		addr = newAddr.newAddress(private_key, 2, 0, false, 5, true);
 		for(int i=0;i<addr.size();i++) {
 			log.info("addr.get("+i+")="+addr.get(i));
 		}
@@ -46,7 +62,7 @@ public class TestNewAddr {
 		log.info("");
 		log.info("pri="+private_key);
 		private_key = "NDIICQCKUMCBXUGTIUZCCTYRMYVISHFGVEJDLVDODS9TELXS9YGSNSXDJTNTZUZJOJNBTYLPGIFUXVHKH";
-		addr = newAddr.getNewAddress(private_key, 2, 4, false, 1, true);
+		addr = newAddr.newAddress(private_key, 2, 4, false, 1, true);
 		for(int i=0;i<addr.size();i++) {
 			log.info("addr.get("+i+")="+addr.get(i));
 		}

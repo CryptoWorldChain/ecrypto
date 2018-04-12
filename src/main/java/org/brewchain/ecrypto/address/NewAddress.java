@@ -1,6 +1,9 @@
 package org.brewchain.ecrypto.address;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import org.brewchain.core.crypto.ECKey;
 
 public interface NewAddress {
 	/**
@@ -16,6 +19,9 @@ public interface NewAddress {
      * @return An array of strings with the specifed number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public List<String> getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws Exception;
+    public List<String> newAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws Exception;
+    
+    
+    public ECKey newAddress(SecureRandom ran) throws Exception;
     
 }
