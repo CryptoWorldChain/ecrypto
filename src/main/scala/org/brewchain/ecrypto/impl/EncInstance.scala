@@ -52,7 +52,7 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     val eckey = new ECKey(ran);
     val encby = HashUtil.ripemd160(eckey.getPubKey);
     //    println("hex=" + Hex.toHexString(encby))
-    val i = encby.foldLeft(BigInt(0))((a, b) => a * 0xFF + BigInt(Math.abs(b)));
+    val i = BigInt(Hex.toHexString(encby),16)
     //    println("i=" + i)
     val id = hexToMapping(i)
     val mix = BCNodeHelper.mixStr(id, key);
