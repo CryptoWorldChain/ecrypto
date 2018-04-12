@@ -3,10 +3,8 @@ package org.brewchain.ecrypto.address;
 import java.security.SecureRandom;
 import java.util.List;
 
-import org.bouncycastle.util.encoders.Hex;
 import org.brewchain.core.crypto.ECKey;
-import org.brewchain.ecrypto.address.AddressFactory;
-import org.brewchain.ecrypto.address.NewAddress;
+import org.spongycastle.util.encoders.Hex;
 
 import lombok.extern.slf4j.Slf4j;
 
