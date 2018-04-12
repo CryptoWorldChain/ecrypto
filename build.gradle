@@ -48,7 +48,7 @@ dependencies {
     // includeInJar "org.apache.commons:commons-lang3:3.4"
     //compile "org.apache.commons:commons-lang3:3.5"
     //compile "commons-codec:commons-codec:1.10"
-    	compile ("org.brewchain:org.brewchain.bcapi:3.2.9")
+    	compile ("org.brewchain:org.brewchain.bcapi:3.3.0")
     
 	includeInJar "org.bouncycastle:bcprov-jdk15on:1.58"
 	
