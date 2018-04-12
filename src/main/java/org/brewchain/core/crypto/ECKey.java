@@ -22,6 +22,7 @@ import org.brewchain.core.crypto.jce.ECKeyPairGenerator;
 import org.brewchain.core.crypto.jce.ECSignatureFactory;
 import org.brewchain.core.crypto.jce.SpongyCastleProvider;
 import org.brewchain.core.util.ByteUtil;
+import org.brewchain.ecrypto.address.AddressEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -418,8 +419,12 @@ public class ECKey implements Serializable {
      * @return 20-byte address
      */
     public static byte[] computeAddress(byte[] pubBytes) {
-        return HashUtil.sha3omit12(
-            Arrays.copyOfRange(pubBytes, 1, pubBytes.length));
+    		byte [] PK = HashUtil.sha3omit12(Arrays.copyOfRange(pubBytes, 1, pubBytes.length));
+    		byte[] NPK = new byte[PK.length + 1];
+    		NPK[0] = AddressEnum.ETH.addrPefix;
+//    		NPK[1] = 0x00;
+        System.arraycopy(PK, 0, NPK, 1, PK.length);
+        return NPK;
     }
 
     /**

@@ -5,7 +5,7 @@ buildscript {
 		classpath "onight.osgi:zpp-gradle:3.0.0"
 	 }
 }
-version = '3.0.2'
+version = '3.0.3'
 
 repositories{
 	maven{ url "http://dl.bintray.com/ethereum/maven/"}
@@ -18,7 +18,7 @@ apply plugin: 'zippo'
 
 ext {
     slf4jVersion = '1.7.13'
-    leveldbVersion = '0.7'
+    // leveldbVersion = '0.7'
     scastleVersion = '1.54.0.0'
     springVersion = '4.2.0.RELEASE'
     hibernateVersion = '4.3.7.Final'
@@ -39,9 +39,6 @@ dependencies {
     includeInJar "com.madgag.spongycastle:core:${scastleVersion}" // for SHA3 and SECP256K1
     includeInJar "com.madgag.spongycastle:prov:${scastleVersion}" // for SHA3 and SECP256K1
 
-    includeInJar "org.iq80.leveldb:leveldb:${leveldbVersion}"     // Java API wrapper around native components
-
-    includeInJar "org.ethereum:leveldbjni-all:1.18.3"             // native leveldb components
 
     includeInJar "org.ethereum:solcJ-all:0.4.8"                   // Solidity includeInJarr win/mac/linux binaries
 
@@ -93,7 +90,8 @@ jar {
 		//		attributes( 'Spring-Context': 'applicationContext-common.xml, applicationContext-beans.xml')
 		// attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle,org.ethereum.crypto')
 		
-		attributes( 'Import-Ignore':'com.fasterxml.jackson,ch.qos.logback,org.spongycastle,org.springframework,io.netty,com.google.common,com.typesafe.config,com.cedarsoftware.util,org.apache.commons.collections4,com.googlecode.concurentlocks,org.fusesource.leveldbjni,org.iq80.leveldb,org.bouncycastle.jcajce.provider.digest' )
+		//  ,org.fusesource.leveldbjni,org.iq80.leveldb
+		attributes( 'Import-Ignore':'com.fasterxml.jackson,ch.qos.logback,org.spongycastle,org.springframework,io.netty,com.google.common,com.typesafe.config,com.cedarsoftware.util,org.apache.commons.collections4,com.googlecode.concurentlocks,org.bouncycastle.jcajce.provider.digest' )
 		
 		//  attributes( 'Import-Ignore':'org.spongycastle,com.madgag.spongycastle')
 		attributes( 'provider':'org.brewchain')

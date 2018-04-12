@@ -26,7 +26,6 @@ import org.brewchain.core.validator.DependentBlockHeaderRuleAdapter;
 import org.brewchain.core.vm.DataWord;
 import org.brewchain.core.vm.LogInfo;
 import org.brewchain.core.vm.program.invoke.ProgramInvokeFactoryImpl;
-import org.iq80.leveldb.DBException;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
@@ -706,19 +705,19 @@ public class StandaloneBlockchain implements LocalBlockchain {
         }
 
         @Override
-        public synchronized void delete(byte[] arg0) throws DBException {
+        public synchronized void delete(byte[] arg0) {
             super.delete(arg0);
             sleep(1);
         }
 
         @Override
-        public synchronized byte[] get(byte[] arg0) throws DBException {
+        public synchronized byte[] get(byte[] arg0) {
             sleep(1);
             return super.get(arg0);
         }
 
         @Override
-        public synchronized void put(byte[] key, byte[] value) throws DBException {
+        public synchronized void put(byte[] key, byte[] value) {
             sleep(1);
             super.put(key, value);
         }

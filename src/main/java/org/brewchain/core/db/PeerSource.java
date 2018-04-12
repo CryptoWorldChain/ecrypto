@@ -5,7 +5,6 @@ import org.brewchain.core.datasource.DataSourceArray;
 import org.brewchain.core.datasource.ObjectDataSource;
 import org.brewchain.core.datasource.Serializer;
 import org.brewchain.core.datasource.Source;
-import org.brewchain.core.datasource.leveldb.LevelDbDataSource;
 import org.brewchain.core.net.rlpx.Node;
 import org.brewchain.core.util.RLP;
 import org.brewchain.core.util.RLPList;
@@ -65,12 +64,12 @@ public class PeerSource {
     }
 
     public void clear() {
-        if (src instanceof LevelDbDataSource) {
-            ((LevelDbDataSource) src).reset();
-            this.nodes = new DataSourceArray<>(
-                    new ObjectDataSource<>(src, NODE_SERIALIZER, 512));
-        } else {
-            throw new RuntimeException("Not supported");
-        }
+//        if (src instanceof LevelDbDataSource) {
+//            ((LevelDbDataSource) src).reset();
+//            this.nodes = new DataSourceArray<>(
+//                    new ObjectDataSource<>(src, NODE_SERIALIZER, 512));
+//        } else {
+//            throw new RuntimeException("Not supported");
+//        }
     }
 }

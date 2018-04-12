@@ -37,19 +37,6 @@ import java.util.*;
 
 import static org.brewchain.core.crypto.HashUtil.sha3;
 
-/**
- * Utility class to retrieve property values from the ethereumj.conf files
- *
- * The properties are taken from different sources and merged in the following order
- * (the config option from the next source overrides option from previous):
- * - resource ethereumj.conf : normally used as a reference config with default values
- *          and shouldn't be changed
- * - system property : each config entry might be altered via -D VM option
- * - [user dir]/config/ethereumj.conf
- * - config specified with the -Dethereumj.conf.file=[file.conf] VM option
- * - CLI options
- *
- */
 public class SystemProperties {
     private static Logger logger = LoggerFactory.getLogger("general");
 
@@ -159,23 +146,23 @@ public class SystemProperties {
             this.classLoader = classLoader;
 
             Config javaSystemProperties = ConfigFactory.load("no-such-resource-only-system-props");
-            Config referenceConfig = ConfigFactory.parseResources("ethereumj.conf");
-            logger.info("Config (" + (referenceConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): default properties from resource 'ethereumj.conf'");
-            String res = System.getProperty("ethereumj.conf.res");
+            Config referenceConfig = ConfigFactory.parseResources("brewchain.conf");
+            logger.info("Config (" + (referenceConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): default properties from resource 'brewchain.conf'");
+            String res = System.getProperty("brewchain.conf.res");
             Config cmdLineConfigRes = res != null ? ConfigFactory.parseResources(res) : ConfigFactory.empty();
-            logger.info("Config (" + (cmdLineConfigRes.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from -Dethereumj.conf.res resource '" + res + "'");
+            logger.info("Config (" + (cmdLineConfigRes.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from -Dbrewchain.conf.res resource '" + res + "'");
             Config userConfig = ConfigFactory.parseResources("user.conf");
             logger.info("Config (" + (userConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from resource 'user.conf'");
-            File userDirFile = new File(System.getProperty("user.dir"), "/config/ethereumj.conf");
+            File userDirFile = new File(System.getProperty("user.dir"), "/conf/brewchain.conf");
             Config userDirConfig = ConfigFactory.parseFile(userDirFile);
             logger.info("Config (" + (userDirConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from file '" + userDirFile + "'");
-            Config testConfig = ConfigFactory.parseResources("test-ethereumj.conf");
-            logger.info("Config (" + (testConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): test properties from resource 'test-ethereumj.conf'");
+            Config testConfig = ConfigFactory.parseResources("test-brewchain.conf");
+            logger.info("Config (" + (testConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): test properties from resource 'test-brewchain.conf'");
             Config testUserConfig = ConfigFactory.parseResources("test-user.conf");
             logger.info("Config (" + (testUserConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): test properties from resource 'test-user.conf'");
-            String file = System.getProperty("ethereumj.conf.file");
+            String file = System.getProperty("brewchain.conf.file");
             Config cmdLineConfigFile = file != null ? ConfigFactory.parseFile(new File(file)) : ConfigFactory.empty();
-            logger.info("Config (" + (cmdLineConfigFile.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from -Dethereumj.conf.file file '" + file + "'");
+            logger.info("Config (" + (cmdLineConfigFile.entrySet().size() > 0 ? " yes " : " no  ") + "): user properties from -Dbrewchain.conf.file file '" + file + "'");
             logger.info("Config (" + (apiConfig.entrySet().size() > 0 ? " yes " : " no  ") + "): config passed via constructor");
             config = apiConfig
                     .withFallback(cmdLineConfigFile)

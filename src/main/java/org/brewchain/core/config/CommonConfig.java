@@ -4,7 +4,6 @@ import org.brewchain.core.core.*;
 import org.brewchain.core.crypto.HashUtil;
 import org.brewchain.core.datasource.*;
 import org.brewchain.core.datasource.inmem.HashMapDB;
-import org.brewchain.core.datasource.leveldb.LevelDbDataSource;
 import org.brewchain.core.db.*;
 import org.brewchain.core.listener.EthereumListener;
 import org.brewchain.core.sync.FastSyncManager;
@@ -122,12 +121,9 @@ public class CommonConfig {
     public DbSource<byte[]> keyValueDataSource(String name) {
         String dataSource = systemProperties().getKeyValueDataSource();
         try {
-            DbSource<byte[]> dbSource;
+            DbSource<byte[]> dbSource = null;
             if ("inmem".equals(dataSource)) {
                 dbSource = new HashMapDB<>();
-            } else {
-                dataSource = "leveldb";
-                dbSource = levelDbDataSource();
             }
             dbSource.setName(name);
             dbSource.init();
@@ -136,12 +132,6 @@ public class CommonConfig {
         } finally {
             logger.info(dataSource + " key-value data source created: " + name);
         }
-    }
-
-    @Bean
-    @Scope("prototype")
-    protected LevelDbDataSource levelDbDataSource() {
-        return new LevelDbDataSource();
     }
 
     public void fastSyncCleanUp() {
@@ -163,11 +153,7 @@ public class CommonConfig {
     }
 
     private void resetDataSource(Source source) {
-        if (source instanceof LevelDbDataSource) {
-            ((LevelDbDataSource) source).reset();
-        } else {
-            throw new Error("Cannot cleanup non-LevelDB database");
-        }
+    		
     }
 
     @Bean

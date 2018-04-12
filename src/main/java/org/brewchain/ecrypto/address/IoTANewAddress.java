@@ -1,8 +1,10 @@
 package org.brewchain.ecrypto.address;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.brewchain.core.crypto.ECKey;
 import org.brewchain.ecrypto.address.iota.Constants;
 import org.brewchain.ecrypto.address.iota.Converter;
 import org.brewchain.ecrypto.address.iota.ICurl;
@@ -28,7 +30,7 @@ public class IoTANewAddress implements NewAddress {
      * @return An array of strings with the specifed number of addresses.
      * @throws ArgumentException is thrown when the specified input is not valid.
      */
-    public List<String> getNewAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws Exception {
+    public List<String> newAddress(final String seed, int security, final int index, final boolean checksum, final int total, final boolean returnAll) throws Exception {
         
     		List<String> allAddresses = new ArrayList<>();
 
@@ -158,4 +160,10 @@ public class IoTANewAddress implements NewAddress {
    public static boolean isTrytes(final String trytes, final int length) {
        return trytes.matches("^[A-Z9]{" + (length == 0 ? "0," : length) + "}$");
    }
+
+	@Override
+	public ECKey newAddress(SecureRandom ran) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+}
 }
