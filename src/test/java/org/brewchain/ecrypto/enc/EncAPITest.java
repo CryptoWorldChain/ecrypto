@@ -2,6 +2,7 @@ package org.brewchain.ecrypto.enc;
 
 import org.brewchain.core.crypto.HashUtil;
 import org.brewchain.ecrypto.impl.EncInstance;
+import org.fc.brewchain.bcapi.EncAPI;
 import org.fc.brewchain.bcapi.KeyPairs;
 
 import lombok.val;
@@ -11,7 +12,7 @@ public class EncAPITest {
 	public static void main(String[] args) {
 		
 		
-		EncInstance enc = new EncInstance();
+		EncAPI enc = new EncInstance();
 		KeyPairs key = enc.genKeys();
 		
 		System.out.println("bcuid:" + key.getBcuid());
