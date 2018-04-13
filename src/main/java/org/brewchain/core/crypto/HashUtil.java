@@ -16,8 +16,7 @@ import java.util.Random;
 import static java.util.Arrays.copyOfRange;
 
 public class HashUtil {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HashUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(HashUtil.class);
 
     private static final Provider CRYPTO_PROVIDER;
 
@@ -48,6 +47,7 @@ public class HashUtil {
         return sha256digest.digest(input);
     }
 
+   
     public static byte[] sha3(byte[] input) {
         MessageDigest digest;
         try {

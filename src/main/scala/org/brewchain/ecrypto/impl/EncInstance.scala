@@ -27,6 +27,7 @@ import org.fc.brewchain.bcapi.crypto.BitMap
 import org.fc.brewchain.bcapi.crypto.BCNodeHelper
 import org.osgi.framework.BundleContext
 import org.brewchain.core.crypto.ECKey.ECDSASignature
+import org.brewchain.core.crypto.HashUtil;
 
 @NActorProvider
 @Instantiate(name = "bc_encoder")
@@ -146,7 +147,9 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   def ecToAddress(contentHash: Array[Byte],signBase64:String): Array[Byte] = {
     ECKey.signatureToAddress(contentHash, signBase64);
   }
-  
+  def sha3Encode(content: Array[Byte]): Array[Byte] = {
+  	HashUtil.sha3(content);
+  }
   def ecToKeyBytes(pubKey: String,content: String): String = {
     val key = ECKey.fromPublicOnly(pubKey.getBytes);
     val contentHash = HashUtil.sha3(content.getBytes);
