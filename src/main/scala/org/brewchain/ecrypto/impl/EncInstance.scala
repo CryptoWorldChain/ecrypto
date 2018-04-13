@@ -26,6 +26,7 @@ import onight.tfw.outils.serialize.SessionIDGenerator
 import org.fc.brewchain.bcapi.crypto.BitMap
 import org.fc.brewchain.bcapi.crypto.BCNodeHelper
 import org.osgi.framework.BundleContext
+import org.brewchain.core.crypto.ECKey.ECDSASignature
 
 @NActorProvider
 @Instantiate(name = "bc_encoder")
@@ -79,7 +80,7 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
     encBytes
   }
-
+  
   def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
     val eckey = ECKey.fromPrivate(Hex.decode(priKey));
     val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
@@ -132,4 +133,39 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     ecVerify(priKey, hexHash, hexDec(signhex));
   }
 
+  
+  def ecToAddress(pubKey: String,content: String): String = {
+    val key = ECKey.fromPublicOnly(pubKey.getBytes);
+    val contentHash = HashUtil.sha3(content.getBytes);
+    val sig = key.doSign(contentHash);
+    hexEnc(ECKey.signatureToAddress(contentHash, sig));
+  }
+  def ecToAddress(contentHash: Array[Byte],r: Array[Byte],s: Array[Byte],v: Byte): Array[Byte] = {
+    ECKey.signatureToAddress(contentHash, ECDSASignature.fromComponents(r, s, v));
+  }
+  def ecToAddress(contentHash: Array[Byte],signBase64:String): Array[Byte] = {
+    ECKey.signatureToAddress(contentHash, signBase64);
+  }
+  
+  def ecToKeyBytes(pubKey: String,content: String): String = {
+    val key = ECKey.fromPublicOnly(pubKey.getBytes);
+    val contentHash = HashUtil.sha3(content.getBytes);
+    val sig = key.doSign(contentHash);
+    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
+  }
+  def ecToKeyBytes(contentHash: Array[Byte],r: Array[Byte],s: Array[Byte],v: Byte): Array[Byte] = {
+    ECKey.signatureToKeyBytes(contentHash, ECDSASignature.fromComponents(r, s, v));
+  }
+  def ecToKeyBytes(contentHash: Array[Byte],signBase64:String): Array[Byte] = {
+    ECKey.signatureToKeyBytes(contentHash, signBase64);
+  }
+  
+  
+  def ecVerify(pubKey: String,content: String,r: Array[Byte],s: Array[Byte],v: Byte): Boolean = {
+    val key = ECKey.fromPublicOnly(pubKey.getBytes);
+    val sig = ECDSASignature.fromComponents(r, s, v);
+    key.verify(HashUtil.sha3(content.getBytes), sig);
+  }
+
+  
 }

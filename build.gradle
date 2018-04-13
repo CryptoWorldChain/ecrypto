@@ -5,7 +5,7 @@ buildscript {
 		classpath "onight.osgi:zpp-gradle:3.0.0"
 	 }
 }
-version = '3.0.4'
+version = '3.0.5'
 
 repositories{
 	maven{ url "http://dl.bintray.com/ethereum/maven/"}
@@ -48,7 +48,7 @@ dependencies {
     // includeInJar "org.apache.commons:commons-lang3:3.4"
     //compile "org.apache.commons:commons-lang3:3.5"
     //compile "commons-codec:commons-codec:1.10"
-    	compile ("org.brewchain:org.brewchain.bcapi:3.3.0")
+    	compile ("org.brewchain:org.brewchain.bcapi:3.3.1")
     
 	includeInJar "org.bouncycastle:bcprov-jdk15on:1.58"
 	
