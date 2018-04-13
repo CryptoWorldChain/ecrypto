@@ -170,11 +170,6 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     println("hash: " + hash)
     val sign = enc.ecSignHex(key.getPrikey, hash);
     println("sign: " + sign)
-    
-    println(enc.ecToAddress(hash, sign));
-    
-    println(enc.ecToKeyBytes(hash, sign));
-    
   }
   
 }
