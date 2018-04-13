@@ -167,5 +167,25 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     key.verify(HashUtil.sha3(content.getBytes), sig);
   }
 
+  def main(args: Array[String]): Unit = {
+    val enc = new EncInstance();
+    val key = enc.genKeys();
+    println("bcuid:" + key.getBcuid)
+    println("pri:  " + key.getPrikey);
+    println("pub:  " + key.getPubkey);
+    println("addr: " + key.getAddress);
+    val content = "测试";
+    val hash = HashUtil.sha3(content.getBytes);
+    println("hash: " + hash)
+    val sign = enc.ecSignHex(key.getPrikey, hash);
+    println("sign: " + sign)
+    
+    println(enc.ecToAddress(hash, sign));
+    println(enc.ecToAddress(key.getPubkey, content));
+    
+    println(enc.ecToKeyBytes(hash, sign));
+    println(enc.ecToKeyBytes(key.getPubkey, content));
+    
+  }
   
 }
