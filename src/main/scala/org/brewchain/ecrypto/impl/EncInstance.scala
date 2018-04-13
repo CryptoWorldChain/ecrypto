@@ -135,12 +135,6 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   }
 
   
-  def ecToAddress(pubKey: String,content: String): String = {
-    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val contentHash = HashUtil.sha3(content.getBytes);
-    val sig = key.doSign(contentHash);
-    hexEnc(ECKey.signatureToAddress(contentHash, sig));
-  }
   def ecToAddress(contentHash: Array[Byte],r: Array[Byte],s: Array[Byte],v: Byte): Array[Byte] = {
     ECKey.signatureToAddress(contentHash, ECDSASignature.fromComponents(r, s, v));
   }
@@ -148,13 +142,7 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     ECKey.signatureToAddress(contentHash, signBase64);
   }
   def sha3Encode(content: Array[Byte]): Array[Byte] = {
-  	HashUtil.sha3(content);
-  }
-  def ecToKeyBytes(pubKey: String,content: String): String = {
-    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val contentHash = HashUtil.sha3(content.getBytes);
-    val sig = key.doSign(contentHash);
-    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
+  	  HashUtil.sha3(content);
   }
   def ecToKeyBytes(contentHash: Array[Byte],r: Array[Byte],s: Array[Byte],v: Byte): Array[Byte] = {
     ECKey.signatureToKeyBytes(contentHash, ECDSASignature.fromComponents(r, s, v));
@@ -184,10 +172,8 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     println("sign: " + sign)
     
     println(enc.ecToAddress(hash, sign));
-    println(enc.ecToAddress(key.getPubkey, content));
     
     println(enc.ecToKeyBytes(hash, sign));
-    println(enc.ecToKeyBytes(key.getPubkey, content));
     
   }
   

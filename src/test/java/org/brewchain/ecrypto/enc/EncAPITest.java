@@ -26,11 +26,8 @@ public class EncAPITest {
 	    System.out.println("sign: " + sign);
 	    
 	    System.out.println(enc.ecToAddress(hash, sign));
-	    System.out.println(enc.ecToAddress(key.getPubkey(), content));
 
 	    System.out.println(enc.ecToKeyBytes(hash, sign));
-	    System.out.println(enc.ecToKeyBytes(key.getPubkey(), content));
-		
 	    
 //	    enc.ecVerify(pubKey, content, r, s, v);
 	}
