@@ -27,7 +27,7 @@ ext {
 
 dependencies {
 	//	 testCompile 'junit:junit:4.12'
-	compile ("org.fc.zippo:org.fc.zippo.oapi:3.3.0")
+	compile ("org.fc.zippo:org.fc.zippo.oapi:3.3.2")
 	
 	// for SHA3 and SECP256K1
     // includeInJar "com.madgag.spongycastle:core:1.54.0.0"

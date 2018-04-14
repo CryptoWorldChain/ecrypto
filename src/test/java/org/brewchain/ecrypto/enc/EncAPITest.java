@@ -1,5 +1,6 @@
 package org.brewchain.ecrypto.enc;
 
+import org.bouncycastle.util.encoders.Base64;
 import org.brewchain.core.crypto.HashUtil;
 import org.brewchain.ecrypto.impl.EncInstance;
 import org.fc.brewchain.bcapi.EncAPI;
@@ -25,12 +26,9 @@ public class EncAPITest {
 	    val sign = enc.ecSignHex(key.getPrikey(), hash);
 	    System.out.println("sign: " + sign);
 	    
-	    System.out.println(enc.ecToAddress(hash, sign));
-	    System.out.println(enc.ecToAddress(key.getPubkey(), content));
+	    System.out.println(enc.ecToAddress(hash, enc.hexEnc(Base64.encode(sign.getBytes()))));
 
-	    System.out.println(enc.ecToKeyBytes(hash, sign));
-	    System.out.println(enc.ecToKeyBytes(key.getPubkey(), content));
-		
+	    System.out.println(enc.ecToKeyBytes(hash, enc.hexEnc(Base64.encode(sign.getBytes()))));
 	    
 //	    enc.ecVerify(pubKey, content, r, s, v);
 	}
