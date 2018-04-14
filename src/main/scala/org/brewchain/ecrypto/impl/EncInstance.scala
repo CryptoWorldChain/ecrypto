@@ -150,6 +150,9 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   def sha3Encode(content: Array[Byte]): Array[Byte] = {
   	HashUtil.sha3(content);
   }
+  def sha256Encode(content: Array[Byte]): Array[Byte] = {
+  	HashUtil.sha256(content);
+  }
   def ecToKeyBytes(pubKey: String,content: String): String = {
     val key = ECKey.fromPublicOnly(pubKey.getBytes);
     val contentHash = HashUtil.sha3(content.getBytes);
@@ -178,7 +181,8 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     println("pub:  " + key.getPubkey);
     println("addr: " + key.getAddress);
     val content = "测试";
-    val hash = HashUtil.sha3(content.getBytes);
+    // val hash = HashUtil.sha3(content.getBytes);
+    val hash = HashUtil.sha256(content.getBytes);
     println("hash: " + hash)
     val sign = enc.ecSignHex(key.getPrikey, hash);
     println("sign: " + sign)
