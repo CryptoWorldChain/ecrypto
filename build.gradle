@@ -2,7 +2,7 @@
 
 buildscript {
 	dependencies { 
-		classpath "onight.osgi:zpp-gradle:3.0.0"
+		classpath "onight.osgi:zpp-gradle:3.2.0"
 	 }
 }
 version = '3.0.5'
@@ -48,7 +48,7 @@ dependencies {
     // includeInJar "org.apache.commons:commons-lang3:3.4"
     //compile "org.apache.commons:commons-lang3:3.5"
     //compile "commons-codec:commons-codec:1.10"
-    	compile ("org.brewchain:org.brewchain.bcapi:3.3.1")
+    	compile ("org.brewchain:org.brewchain.bcapi:3.3.2")
     
 	includeInJar "org.bouncycastle:bcprov-jdk15on:1.58"
 	
