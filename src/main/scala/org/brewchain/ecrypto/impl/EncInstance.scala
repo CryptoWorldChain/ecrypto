@@ -128,42 +128,37 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     hexEnc(ecSign(priKey, hexHash))
   }
 
-  def ecVerifyHex(priKey: String, hexHash: String, signhex: String): Boolean = {
-    ecVerify(priKey, hexDec(hexHash), hexDec(signhex));
+  def ecVerifyHex(pubKey: String, hexHash: String, signhex: String): Boolean = {
+    ecVerify(pubKey, hexDec(hexHash), hexDec(signhex));
   }
-  def ecVerifyHex(priKey: String, hexHash: Array[Byte], signhex: String): Boolean = {
-    ecVerify(priKey, hexHash, hexDec(signhex));
+  def ecVerifyHex(pubKey: String, hexHash: Array[Byte], signhex: String): Boolean = {
+    ecVerify(pubKey, hexHash, hexDec(signhex));
   }
 
-  def ecToAddress(contentHash: Array[Byte], r: Array[Byte], s: Array[Byte], v: Byte): Array[Byte] = {
-    ECKey.signatureToAddress(contentHash, ECDSASignature.fromComponents(r, s, v));
-  }
-  def ecToAddress(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    ECKey.signatureToAddress(contentHash, signBase64);
-  }
+  
+  
   def sha3Encode(content: Array[Byte]): Array[Byte] = {
   	HashUtil.sha3(content);
   }
   def sha256Encode(content: Array[Byte]): Array[Byte] = {
   	HashUtil.sha256(content);
   }
+  
+  
+  
   def ecToKeyBytes(pubKey: String,content: String): String = {
     val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val contentHash = HashUtil.sha3(content.getBytes);
+    val contentHash = HashUtil.sha256(content.getBytes);
     val sig = key.doSign(contentHash);
     hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
   }
-  def ecToKeyBytes(contentHash: Array[Byte], r: Array[Byte], s: Array[Byte], v: Byte): Array[Byte] = {
-    ECKey.signatureToKeyBytes(contentHash, ECDSASignature.fromComponents(r, s, v));
+  
+  def ecToAddress(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
+    ECKey.signatureToAddress(contentHash, signBase64);
   }
+  
   def ecToKeyBytes(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
     ECKey.signatureToKeyBytes(contentHash, signBase64);
-  }
-
-  def ecVerify(pubKey: String, content: String, r: Array[Byte], s: Array[Byte], v: Byte): Boolean = {
-    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val sig = ECDSASignature.fromComponents(r, s, v);
-    key.verify(HashUtil.sha3(content.getBytes), sig);
   }
 
 }
