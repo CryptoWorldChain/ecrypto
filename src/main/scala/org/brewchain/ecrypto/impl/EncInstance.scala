@@ -75,6 +75,18 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
       nextUID(pubstr));
     return kp
   };
+  
+  def genKeys(seed:String): KeyPairs = {
+    val eckey = ECKey.fromPrivate(HashUtil.sha3(seed.getBytes()))
+    val pubstr = Hex.toHexString(eckey.getPubKey);
+    val kp = new KeyPairs(
+      Hex.toHexString(eckey.getPubKey),
+      Hex.toHexString(eckey.getPrivKeyBytes),
+      Hex.toHexString(eckey.getAddress),
+      nextUID(pubstr));
+    return kp
+  };
+  
 
   def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
     val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));

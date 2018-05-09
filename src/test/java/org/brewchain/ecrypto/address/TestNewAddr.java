@@ -13,11 +13,11 @@ public class TestNewAddr {
 
 	public static String randomPK(int length) {
 	    //随机字符串的随机字符库
-	    String KeyString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
+	    String keyString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9";
 	    StringBuffer sb = new StringBuffer();
-	    int len = KeyString.length();
+	    int len = keyString.length();
 	    for (int i = 0; i < length; i++) {
-	       sb.append(KeyString.charAt((int) Math.round(Math.random() * (len - 1))));
+	       sb.append(keyString.charAt((int) Math.round(Math.random() * (len - 1))));
 	    }
 	    return sb.toString();
 	}

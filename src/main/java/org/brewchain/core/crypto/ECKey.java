@@ -808,7 +808,7 @@ public class ECKey implements Serializable {
         int header = sig.v;
         // The header byte: 0x1B = first key with even y, 0x1C = first key with odd y,
         //                  0x1D = second key with even y, 0x1E = second key with odd y
-        if (header < 27 || header > 34)
+        if (header < 27 || header > 54)
             throw new SignatureException("Header byte out of range: " + header);
         if (header >= 31) {
             header -= 4;
@@ -1067,10 +1067,10 @@ public class ECKey implements Serializable {
         // More concisely, what these points mean is to use X as a compressed public key.
         ECCurve.Fp curve = (ECCurve.Fp) CURVE.getCurve();
         BigInteger prime = curve.getQ();  // Bouncy Castle is not consistent about the letter it uses for the prime.
-        if (x.compareTo(prime) >= 0) {
-            // Cannot have point co-ordinates larger than this as everything takes place modulo Q.
-            return null;
-        }
+//        if (x.compareTo(prime) >= 0) {
+//      // Cannot have point co-ordinates larger than this as everything takes place modulo Q.
+//      return null;
+//  }
         // Compressed keys require you to know an extra bit of data about the y-coord as there are two possibilities.
         // So it's encoded in the recId.
         ECPoint R = decompressKey(x, (recId & 1) == 1);

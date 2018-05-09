@@ -29,6 +29,22 @@ public class EncAPITest {
 		
 		EncAPI encAPI = new EncInstance();
 		
+		KeyPairs k1 = encAPI.genKeys("ailen");
+		System.out.println("pri1 ="+k1.getPrikey());
+		System.out.println("pub1 ="+k1.getPubkey());
+		System.out.println("addr1="+k1.getAddress());
+		
+		KeyPairs k2 = encAPI.genKeys("ailen");
+		System.out.println("pri2 ="+k2.getPrikey());
+		System.out.println("pub2 ="+k2.getPubkey());
+		System.out.println("addr2="+k2.getAddress());
+		
+		KeyPairs k3 = encAPI.genKeys("ailen");
+		System.out.println("pri3 ="+k2.getPrikey());
+		System.out.println("pub3 ="+k2.getPubkey());
+		System.out.println("addr3="+k2.getAddress());
+		
+		
 		KeyPairs k = encAPI.genKeys();
 		System.out.println("pri ="+k.getPrikey());
 		System.out.println("pub ="+k.getPubkey());
