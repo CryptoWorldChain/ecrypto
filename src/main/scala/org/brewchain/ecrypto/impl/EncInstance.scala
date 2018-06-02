@@ -63,6 +63,9 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
 
   override def getModule: String = "BIP"
   override def getCmds: Array[String] = Array("ENC");
+  def priKeyToAddress(privKey: String): String={
+    return "";
+  }
   def genKeys(): KeyPairs = {
     val ran = new SecureRandom();
     //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
