@@ -28,6 +28,7 @@ import org.fc.brewchain.bcapi.crypto.BCNodeHelper
 import org.osgi.framework.BundleContext
 import org.brewchain.core.crypto.ECKey.ECDSASignature
 import org.brewchain.core.crypto.HashUtil;
+import org.brewchain.core.crypto.jni.IPPCrypto
 
 @NActorProvider
 @Instantiate(name = "bc_encoder")
@@ -67,6 +68,8 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     return "";
   }
   def genKeys(): KeyPairs = {
+    
+    
     val ran = new SecureRandom();
     //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
     val eckey = new ECKey(ran);
@@ -91,19 +94,21 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   };
   
 
-  def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
-    val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
-    encBytes
-  }
-
-  def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
-    val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
-    orgBytes;
-  }
+  
+//  def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
+//    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
+//    val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
+//    encBytes
+//  }
+//
+//  def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
+//    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
+//    val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
+//    orgBytes;
+//  }
 
   def ecSign(priKey: String, contentHash: Array[Byte]): Array[Byte] = {
+    
     val eckey = ECKey.fromPrivate(Hex.decode(priKey));
     val ecSig = ECSignatureFactory.getRawInstance(SpongyCastleProvider.getInstance());
     val prikey = ECKeyFactory

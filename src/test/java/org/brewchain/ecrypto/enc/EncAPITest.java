@@ -8,7 +8,6 @@ public class EncAPITest {
 
 	public static void main(String[] args) {
 		
-		
 //		EncAPI enc = new EncInstance();
 //		KeyPairs key = enc.genKeys();
 //		
@@ -56,21 +55,21 @@ public class EncAPITest {
 		
 		System.out.println("verify="+encAPI.ecVerify(k.getPubkey(), "abc".getBytes(), s));
 
-		byte[] pkb641 = encAPI.ecToKeyBytes(
-				encAPI.sha256Encode("abc".getBytes())
-				, sb64);
-		System.out.println("pub ="+encAPI.hexEnc(pkb641));
+//		byte[] pkb641 = encAPI.ecToKeyBytes(
+//				encAPI.sha256Encode("abc".getBytes())
+//				, sb64);
+//		System.out.println("pub ="+encAPI.hexEnc(pkb641));
 		
-		byte[] ab641 = encAPI.ecToAddress(
-				encAPI.sha256Encode("abc".getBytes())
-				, sb64);
-		System.out.println("addr="+encAPI.hexEnc(ab641));
+//		byte[] ab641 = encAPI.ecToAddress(
+//				encAPI.sha256Encode("abc".getBytes())
+//				, sb64);
+//		System.out.println("addr="+encAPI.hexEnc(ab641));
 		
-		byte[] pkb64 = encAPI.ecToKeyBytes(encAPI.sha3Encode("abc".getBytes()), sb64);
-		System.out.println("pub ="+encAPI.hexEnc(pkb64));
-		
-		byte[] ab64 = encAPI.ecToAddress(encAPI.sha3Encode("abc".getBytes()), sb64);
-		System.out.println("addr="+encAPI.hexEnc(ab64));
+//		byte[] pkb64 = encAPI.ecToKeyBytes(encAPI.sha3Encode("abc".getBytes()), sb64);
+//		System.out.println("pub ="+encAPI.hexEnc(pkb64));
+//		
+//		byte[] ab64 = encAPI.ecToAddress(encAPI.sha3Encode("abc".getBytes()), sb64);
+//		System.out.println("addr="+encAPI.hexEnc(ab64));
 		
 		
 	}
