@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 public class IPPCrypto {
 	public native void init();
 
-	public native void genKeys(byte[] pk, byte[] x, byte[] y);
+	public native void genKeys(byte[]seed,byte[] pk, byte[] x, byte[] y);
 
 	public native boolean fromPrikey(byte[] pk, byte[] x, byte[] y);
 
