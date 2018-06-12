@@ -9,7 +9,11 @@ import javassist.bytecode.ByteArray;
 public class TestIPPCWV {
 
 	public static void main(String[] args) {
-		IPPCrypto.loadLibrary();
+		try {
+			IPPCrypto.loadLibrary();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		IPPCrypto crypto = new IPPCrypto();
 		
 		byte []pk=new byte[32];

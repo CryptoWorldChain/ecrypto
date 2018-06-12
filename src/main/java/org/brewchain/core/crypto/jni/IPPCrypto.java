@@ -13,7 +13,7 @@ public class IPPCrypto {
 
 	public native boolean verifyMessage(byte[] x, byte[] y, byte[] text, byte[] s, byte[] v);
 
-	public static void loadLibrary() {
+	public static void loadLibrary() throws Throwable {
 		loadLibrary(null);
 	}
 
@@ -32,18 +32,14 @@ public class IPPCrypto {
 		sysPathsField.set(null, null);
 	}
 
-	public static void loadLibrary(String path) {
+	public static void loadLibrary(String path) throws Throwable {
 		if (path == null) {
 			path = "./clib";
 		}
-		try {
-			String libpath = System.getProperty("java.library.path");
-			libpath = libpath + ":" + path;
-			setLibraryPath(libpath);
-			System.out.println("libpath=" + libpath);
-			System.loadLibrary("ippcwv");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String libpath = System.getProperty("java.library.path");
+		libpath = libpath + ":" + path;
+		setLibraryPath(libpath);
+		System.out.println("libpath=" + libpath);
+		System.loadLibrary("ippcwv");
 	}
 }
