@@ -29,6 +29,8 @@ import org.osgi.framework.BundleContext
 import org.brewchain.core.crypto.ECKey.ECDSASignature
 import org.brewchain.core.crypto.HashUtil;
 import org.brewchain.core.crypto.jni.IPPCrypto
+import org.brewchain.core.util.ByteUtil
+import java.util.Arrays
 
 @NActorProvider
 @Instantiate(name = "bc_encoder")
@@ -48,6 +50,21 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
 //    log.debug("Apply()=")
 //    this
 //  }
+  
+  var clibLoad:Boolean = false;
+  var crypto:IPPCrypto = null;
+	def startup() {
+    try{
+    		  IPPCrypto.loadLibrary();
+    		  clibLoad = true;
+    		  crypto = new IPPCrypto();
+    }catch{
+        case e: Throwable => println(e);
+        clibLoad = false;
+        crypto = null;
+    }
+  }
+  
   def nextUID(key: String = "BCC2018"): String = {
     //    val id = UUIG.generate()
     val ran = new SecureRandom(key.getBytes);
@@ -67,48 +84,95 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   def priKeyToAddress(privKey: String): String={
     return "";
   }
+  
+  
   def genKeys(): KeyPairs = {
-    
-    
-    val ran = new SecureRandom();
-    //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
-    val eckey = new ECKey(ran);
-    val pubstr = Hex.toHexString(eckey.getPubKey);
-    val kp = new KeyPairs(
-      Hex.toHexString(eckey.getPubKey),
-      Hex.toHexString(eckey.getPrivKeyBytes),
-      Hex.toHexString(eckey.getAddress),
-      nextUID(pubstr));
-    return kp
+    if(clibLoad && crypto != null){
+			val pk = new Array[Byte](32);
+			val x= new Array[Byte](32);
+			val y= new Array[Byte](32);
+			crypto.genKeys(null,pk, x, y);
+			val pubKeyByte = ByteUtil.merge(x,y);
+			val privKey = hexEnc(pk);
+			val pubKey = hexEnc(pubKeyByte);
+			val address = hexEnc(Arrays.copyOfRange(sha256Encode(pubKeyByte), 0, 20));
+			val kp = new KeyPairs(
+          pubKey,
+          privKey,
+          address,
+          nextUID(pubKey));
+        return kp;
+    } else {
+        val ran = new SecureRandom();
+        //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
+        val eckey = new ECKey(ran);
+        val pubstr = Hex.toHexString(eckey.getPubKey);
+        val kp = new KeyPairs(
+          hexEnc(eckey.getPubKey),
+          hexEnc(eckey.getPrivKeyBytes),
+          hexEnc(eckey.getAddress),
+          nextUID(pubstr));
+        return kp;
+    }
   };
   
   def genKeys(seed:String): KeyPairs = {
-    val eckey = ECKey.fromPrivate(HashUtil.sha3(seed.getBytes()))
-    val pubstr = Hex.toHexString(eckey.getPubKey);
-    val kp = new KeyPairs(
-      Hex.toHexString(eckey.getPubKey),
-      Hex.toHexString(eckey.getPrivKeyBytes),
-      Hex.toHexString(eckey.getAddress),
-      nextUID(pubstr));
-    return kp
+    if(clibLoad && crypto != null){
+      val pk = new Array[Byte](32);
+			val x= new Array[Byte](32);
+			val y= new Array[Byte](32);
+			crypto.genKeys(HashUtil.sha3(seed.getBytes()),pk, x, y);
+			val pubKeyByte = ByteUtil.merge(x,y);
+			val privKey = hexEnc(pk);
+			val pubKey = hexEnc(pubKeyByte);
+			val address = hexEnc(Arrays.copyOfRange(sha256Encode(pubKeyByte), 0, 20));
+			val kp = new KeyPairs(
+          pubKey,
+          privKey,
+          address,
+          nextUID(pubKey));
+        return kp;
+    }else{
+      val eckey = ECKey.fromPrivate(HashUtil.sha3(seed.getBytes()))
+      val pubstr = Hex.toHexString(eckey.getPubKey);
+      val kp = new KeyPairs(
+        hexEnc(eckey.getPubKey),
+        Hex.toHexString(eckey.getPrivKeyBytes),
+        Hex.toHexString(eckey.getAddress),
+        nextUID(pubstr));
+      return kp
+    }
   };
   
 
   
-//  def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
-//    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
-//    val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
-//    encBytes
-//  }
-//
-//  def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
-//    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
-//    val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
-//    orgBytes;
-//  }
+  def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
+    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
+    val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
+    encBytes;
+  }
+
+  def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
+    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
+    val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
+    orgBytes;
+  }
 
   def ecSign(priKey: String, contentHash: Array[Byte]): Array[Byte] = {
     
+    if(clibLoad){
+      val privKeyBytes:Array[Byte] = Hex.decode(priKey);
+			val x= new Array[Byte](32);
+			val y= new Array[Byte](32);
+			if(crypto.fromPrikey(privKeyBytes, x, y)){
+			  val s= new Array[Byte](32);
+			  val a= new Array[Byte](32);
+			  if(crypto.signMessage(privKeyBytes, x, y, contentHash, s, a)){
+      			val signBytes = ByteUtil.merge(x,y,Arrays.copyOfRange(sha256Encode(ByteUtil.merge(x,y)), 0, 20),s,a);
+      			return signBytes;
+      		}
+			}
+    }
     val eckey = ECKey.fromPrivate(Hex.decode(priKey));
     val ecSig = ECSignatureFactory.getRawInstance(SpongyCastleProvider.getInstance());
     val prikey = ECKeyFactory
@@ -120,8 +184,17 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   }
 
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
-    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
-    eckey.verify(contentHash, sign)
+    if(clibLoad){
+      val pubKeyBytes = Hex.decode(pubKey);
+      val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
+      val y = Arrays.copyOfRange(pubKeyBytes, 32, 64);
+      val s = Arrays.copyOfRange(sign, 84, 116);
+      val a = Arrays.copyOfRange(sign, 116, 148);
+      crypto.verifyMessage(x, y, contentHash, s, a);
+    }else{
+      val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
+      eckey.verify(contentHash, sign);
+    }
   }
 
   def base64Enc(data: Array[Byte]): String = {
@@ -174,11 +247,19 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   }
   
   def ecToAddress(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    ECKey.signatureToAddress(contentHash, signBase64);
+    if(clibLoad){
+      Arrays.copyOfRange(base64Dec(signBase64),64,84);
+    }else{
+      ECKey.signatureToAddress(contentHash, signBase64);
+    }
   }
   
   def ecToKeyBytes(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    ECKey.signatureToKeyBytes(contentHash, signBase64);
+    if(clibLoad){
+      Arrays.copyOfRange(base64Dec(signBase64),0,64);
+    }else{
+      ECKey.signatureToKeyBytes(contentHash, signBase64);
+    }
   }
 
 }
