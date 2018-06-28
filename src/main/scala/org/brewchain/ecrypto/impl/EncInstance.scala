@@ -58,10 +58,12 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     		  IPPCrypto.loadLibrary();
     		  clibLoad = true;
     		  crypto = new IPPCrypto();
+        log.info("CLibs加载成功");
     }catch{
         case e: Throwable => println(e);
         clibLoad = false;
         crypto = null;
+        log.info("CLibs加载失败");
     }
   }
   
