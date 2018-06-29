@@ -1,36 +1,41 @@
 package org.brewchain.ecrypto.impl
 
-import onight.osgi.annotation.NActorProvider
-import org.apache.felix.ipojo.annotations.Instantiate
-import onight.tfw.ntrans.api.ActorService
-import org.fc.brewchain.bcapi.EncAPI
-import org.apache.felix.ipojo.annotations.Provides
-import onight.oapi.scala.commons.SessionModules
-import onight.oapi.scala.commons.PBUtils
-import onight.oapi.scala.traits.OLog
-import com.google.protobuf.Message
-import org.apache.felix.ipojo.annotations.ServiceProperty
-import scala.beans.BeanProperty
-import org.fc.brewchain.bcapi.KeyPairs
-import org.brewchain.core.crypto.ECKey
-import org.spongycastle.util.encoders.Hex
 import java.security.SecureRandom
+import java.util.Arrays
+
+import scala.beans.BeanProperty
+
+import org.apache.commons.codec.binary.Base64
+import org.apache.felix.ipojo.annotations.Instantiate
+import org.apache.felix.ipojo.annotations.Provides
+import org.apache.felix.ipojo.annotations.ServiceProperty
 import org.brewchain.core.crypto.ECIESCoder
+import org.brewchain.core.crypto.ECKey
+import org.brewchain.core.crypto.HashUtil
+import org.brewchain.core.crypto.jce.ECKeyFactory
 import org.brewchain.core.crypto.jce.ECSignatureFactory
 import org.brewchain.core.crypto.jce.SpongyCastleProvider
-import org.brewchain.core.crypto.jce.ECKeyFactory
-import org.spongycastle.jce.spec.ECPrivateKeySpec
-import org.apache.commons.codec.binary.Base64
-import org.brewchain.core.crypto.HashUtil
-import onight.tfw.outils.serialize.SessionIDGenerator
-import org.fc.brewchain.bcapi.crypto.BitMap
-import org.fc.brewchain.bcapi.crypto.BCNodeHelper
-import org.osgi.framework.BundleContext
-import org.brewchain.core.crypto.ECKey.ECDSASignature
-import org.brewchain.core.crypto.HashUtil;
 import org.brewchain.core.crypto.jni.IPPCrypto
 import org.brewchain.core.util.ByteUtil
-import java.util.Arrays
+import org.fc.brewchain.bcapi.EncAPI
+import org.fc.brewchain.bcapi.KeyPairs
+import org.fc.brewchain.bcapi.crypto.BCNodeHelper
+import org.fc.brewchain.bcapi.crypto.BitMap
+import org.spongycastle.jce.spec.ECPrivateKeySpec
+import org.spongycastle.util.encoders.Hex
+
+import com.google.protobuf.Message
+
+import onight.oapi.scala.commons.PBUtils
+import onight.oapi.scala.commons.SessionModules
+import onight.oapi.scala.traits.OLog
+import onight.osgi.annotation.NActorProvider
+import onight.tfw.ntrans.api.ActorService
+import onight.tfw.outils.serialize.SessionIDGenerator
+
+import org.brewchain.ecrypto.address.AddressFactory
+import org.brewchain.ecrypto.address.AddressEnum;
+import java.util.List
 
 @NActorProvider
 @Instantiate(name = "bc_encoder")
@@ -58,12 +63,12 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     		  IPPCrypto.loadLibrary();
     		  clibLoad = true;
     		  crypto = new IPPCrypto();
-        log.info("CLibs加载成功");
+        log.info("CLibs loading success");
     }catch{
         case e: Throwable => println(e);
         clibLoad = false;
         crypto = null;
-        log.info("CLibs加载失败");
+        log.info("CLibs loading fail");
     }
   }
   
@@ -87,6 +92,18 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
     return "";
   }
   
+//  def genETHKeys(): KeyPairs = {
+//    
+//  }
+//  
+//  def genBTCKeys(): KeyPairs = {
+//    
+//  }
+  
+  def genIOTAKeys(seed:String,security:Int,index:Int,checksum:Boolean,total:Int,returnAll:Boolean):List[String] = {
+    val newAddr = AddressFactory.create(AddressEnum.IOTA);
+	  newAddr.newAddress(seed, security, index, checksum, total, returnAll);
+  }
   
   def genKeys(): KeyPairs = {
     if(clibLoad && crypto != null){

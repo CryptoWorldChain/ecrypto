@@ -24,6 +24,7 @@ import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.spongycastle.jce.spec.ECParameterSpec;
 import org.spongycastle.jce.spec.ECPrivateKeySpec;
 import org.spongycastle.math.ec.ECPoint;
+import org.spongycastle.util.encoders.Hex;
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -100,8 +101,8 @@ public class BCKey implements Serializable {
 //		PrivateKey privKey = ECKeyFactory.getInstance(SpongyCastleProvider.getInstance()).generatePrivate(new ECPrivateKeySpec(priv, CURVE_SPEC));
 		ECPoint pub = CURVE.getG().multiply(priv);
 		if(pub != null && pub.getXCoord() != null && pub.getYCoord() != null) {
-			x = pub.getXCoord().getEncoded();
-			y = pub.getYCoord().getEncoded();
+			x = pub.getAffineXCoord().getEncoded();
+			y = pub.getAffineYCoord().getEncoded();
 			CURVE.getCurve().createPoint(pub.getXCoord().toBigInteger(), pub.getYCoord().toBigInteger());
 			return true;
 		}
@@ -118,9 +119,10 @@ public class BCKey implements Serializable {
 			  .generatePrivate(new ECPrivateKeySpec(new BigInteger(1, privKeyBytes), CURVE_SPEC));
 			ecSig.initSign(prikey);
 			ecSig.update(msg);
-			ecSig.sign();
 			
-//			s = ecSig.sign()
+			// TODO 
+			System.out.println(Hex.toHexString(ecSig.sign()));
+			
 			
 			return true;
 		} catch (InvalidKeyException e) {
@@ -137,8 +139,9 @@ public class BCKey implements Serializable {
 	}
 	
 	public boolean verifyMessage(byte[] x, byte[] y, byte[] msg, byte[] s, byte[] a) {
-		
-		
+//		val eckey = ECKey.fromPublicOnly(ByteUtil.merge(x,y));
+//	    return ECKey.verify(data, signature, ByteUtil.merge(x,y))
+		// TODO
 		return false;
 	}
 	 
