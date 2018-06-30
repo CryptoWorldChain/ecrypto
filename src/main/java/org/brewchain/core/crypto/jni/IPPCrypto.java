@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 public class IPPCrypto {
 	public native void init();
 
-	public native void genKeys(byte[]seed,byte[] pk, byte[] x, byte[] y);
+	public native void genKeys(byte[] seed, byte[] pk, byte[] x, byte[] y);
 
 	public native boolean fromPrikey(byte[] pk, byte[] x, byte[] y);
 
@@ -13,6 +13,23 @@ public class IPPCrypto {
 
 	public native boolean verifyMessage(byte[] x, byte[] y, byte[] text, byte[] s, byte[] v);
 
+	public native String sha3(byte[] x);
+
+	public native String sha256(byte[] x);
+
+	public native String md5(byte[] x);
+
+	public native String keccak(byte[] x);
+
+	public native boolean bsha3(byte[] x,byte[]o);
+
+	public native boolean bsha256(byte[] x,byte[]o);
+
+	public native boolean bmd5(byte[] x,byte[]o);
+
+	public native boolean bkeccak(byte[] x,byte[]o);
+
+	
 	public static void loadLibrary() throws Throwable {
 		loadLibrary(null);
 	}

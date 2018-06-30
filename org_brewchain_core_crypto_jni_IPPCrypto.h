@@ -18,26 +18,66 @@ JNIEXPORT void JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_init
 /*
  * Class:     org_brewchain_core_crypto_jni_IPPCrypto
  * Method:    genKeys
- * Signature: ([B[B[B)V
+ * Signature: ([B[B[B[B)V
  */
 JNIEXPORT void JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_genKeys
+  (JNIEnv *, jobject, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
+
+/*
+ * Class:     org_brewchain_core_crypto_jni_IPPCrypto
+ * Method:    fromPrikey
+ * Signature: ([B[B[B)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_fromPrikey
   (JNIEnv *, jobject, jbyteArray, jbyteArray, jbyteArray);
 
 /*
  * Class:     org_brewchain_core_crypto_jni_IPPCrypto
  * Method:    signMessage
- * Signature: ([B[B[BLjava/lang/String;[B[B)Z
+ * Signature: ([B[B[B[B[B[B)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_signMessage
-  (JNIEnv *, jobject, jbyteArray, jbyteArray, jbyteArray, jstring, jbyteArray, jbyteArray);
+  (JNIEnv *, jobject, jbyteArray, jbyteArray, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
 
 /*
  * Class:     org_brewchain_core_crypto_jni_IPPCrypto
  * Method:    verifyMessage
- * Signature: ([B[BLjava/lang/String;[B[B)Z
+ * Signature: ([B[B[B[B[B)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_verifyMessage
-  (JNIEnv *, jobject, jbyteArray, jbyteArray, jstring, jbyteArray, jbyteArray);
+  (JNIEnv *, jobject, jbyteArray, jbyteArray, jbyteArray, jbyteArray, jbyteArray);
+
+/*
+ * Class:     org_brewchain_core_crypto_jni_IPPCrypto
+ * Method:    sha3
+ * Signature: ([B)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_sha3
+  (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     org_brewchain_core_crypto_jni_IPPCrypto
+ * Method:    sha256
+ * Signature: ([B)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_sha256
+  (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     org_brewchain_core_crypto_jni_IPPCrypto
+ * Method:    md5
+ * Signature: ([B)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_md5
+  (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     org_brewchain_core_crypto_jni_IPPCrypto
+ * Method:    Keccak
+ * Signature: ([B)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_brewchain_core_crypto_jni_IPPCrypto_Keccak
+  (JNIEnv *, jobject, jbyteArray);
 
 #ifdef __cplusplus
 }

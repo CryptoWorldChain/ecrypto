@@ -46,239 +46,111 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   @BeanProperty
   var name: String = "bc_encoder";
 
-//  def apply(bundleContext: BundleContext): EncInstance = {
-//    log.debug("apply:bundleContext=" + bundleContext)
-//    this
-//  }
+  //  def apply(bundleContext: BundleContext): EncInstance = {
+  //    log.debug("apply:bundleContext=" + bundleContext)
+  //    this
+  //  }
 
-//  def apply(): EncInstance = {
-//    log.debug("Apply()=")
-//    this
-//  }
-  
-  var clibLoad:Boolean = false;
-  var crypto:IPPCrypto = null;
-	def startup() {
-    try{
-    		  IPPCrypto.loadLibrary();
-    		  clibLoad = true;
-    		  crypto = new IPPCrypto();
-        log.info("CLibs loading success");
-    }catch{
-        case e: Throwable => println(e);
-        clibLoad = false;
-        crypto = null;
+  //  def apply(): EncInstance = {
+  //    log.debug("Apply()=")
+  //    this
+  //  }
+
+  var enc: EncTrait = JavaEncInstance();
+  def startup() {
+    try {
+      IPPCrypto.loadLibrary();
+      var crypto = new IPPCrypto();
+      enc = NativeEncInstance(crypto);
+      log.info("CLibs loading success:" + crypto);
+    } catch {
+      case e: Throwable =>
+        println(e);
         log.info("CLibs loading fail");
     }
   }
-  
-  def nextUID(key: String = "BCC2018"): String = {
-    //    val id = UUIG.generate()
-    val ran = new SecureRandom(key.getBytes);
-    //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
-    val eckey = new ECKey(ran);
-    val encby = HashUtil.ripemd160(eckey.getPubKey);
-    //    println("hex=" + Hex.toHexString(encby))
-    val i = BigInt(Hex.toHexString(encby), 16)
-    //    println("i=" + i)
-    val id = hexToMapping(i)
-    val mix = BCNodeHelper.mixStr(id, key);
-    mix + SessionIDGenerator.genSum(mix)
-  }
+
 
   override def getModule: String = "BIP"
   override def getCmds: Array[String] = Array("ENC");
-  def priKeyToAddress(privKey: String): String={
+  def priKeyToAddress(privKey: String): String = {
     return "";
   }
-  
-//  def genETHKeys(): KeyPairs = {
-//    
-//  }
-//  
-//  def genBTCKeys(): KeyPairs = {
-//    
-//  }
-  
-  def genIOTAKeys(seed:String,security:Int,index:Int,checksum:Boolean,total:Int,returnAll:Boolean):List[String] = {
+
+  def genIOTAKeys(seed: String, security: Int, index: Int, checksum: Boolean, total: Int, returnAll: Boolean): List[String] = {
     val newAddr = AddressFactory.create(AddressEnum.IOTA);
-	  newAddr.newAddress(seed, security, index, checksum, total, returnAll);
+    newAddr.newAddress(seed, security, index, checksum, total, returnAll);
   }
-  
+
   def genKeys(): KeyPairs = {
-    if(clibLoad && crypto != null){
-			val pk = new Array[Byte](32);
-			val x= new Array[Byte](32);
-			val y= new Array[Byte](32);
-			crypto.genKeys(null,pk, x, y);
-			val pubKeyByte = ByteUtil.merge(x,y);
-			val privKey = hexEnc(pk);
-			val pubKey = hexEnc(pubKeyByte);
-			val address = hexEnc(Arrays.copyOfRange(sha256Encode(pubKeyByte), 0, 20));
-			val kp = new KeyPairs(
-          pubKey,
-          privKey,
-          address,
-          nextUID(pubKey));
-        return kp;
-    } else {
-        val ran = new SecureRandom();
-        //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
-        val eckey = new ECKey(ran);
-        val pubstr = Hex.toHexString(eckey.getPubKey);
-        val kp = new KeyPairs(
-          hexEnc(eckey.getPubKey),
-          hexEnc(eckey.getPrivKeyBytes),
-          hexEnc(eckey.getAddress),
-          nextUID(pubstr));
-        return kp;
-    }
+    enc.genKeys()
   };
-  
-  def genKeys(seed:String): KeyPairs = {
-    if(clibLoad && crypto != null){
-      val pk = new Array[Byte](32);
-			val x= new Array[Byte](32);
-			val y= new Array[Byte](32);
-			crypto.genKeys(HashUtil.sha3(seed.getBytes()),pk, x, y);
-			val pubKeyByte = ByteUtil.merge(x,y);
-			val privKey = hexEnc(pk);
-			val pubKey = hexEnc(pubKeyByte);
-			val address = hexEnc(Arrays.copyOfRange(sha256Encode(pubKeyByte), 0, 20));
-			val kp = new KeyPairs(
-          pubKey,
-          privKey,
-          address,
-          nextUID(pubKey));
-        return kp;
-    }else{
-      val eckey = ECKey.fromPrivate(HashUtil.sha3(seed.getBytes()))
-      val pubstr = Hex.toHexString(eckey.getPubKey);
-      val kp = new KeyPairs(
-        hexEnc(eckey.getPubKey),
-        Hex.toHexString(eckey.getPrivKeyBytes),
-        Hex.toHexString(eckey.getAddress),
-        nextUID(pubstr));
-      return kp
-    }
+
+  def genKeys(seed: String): KeyPairs = {
+    enc.genKeys(seed)
   };
-  
-
-  
-  def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
-    val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
-    encBytes;
-  }
-
-  def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
-    val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
-    orgBytes;
-  }
 
   def ecSign(priKey: String, contentHash: Array[Byte]): Array[Byte] = {
-    
-    if(clibLoad){
-      val privKeyBytes:Array[Byte] = Hex.decode(priKey);
-			val x= new Array[Byte](32);
-			val y= new Array[Byte](32);
-			if(crypto.fromPrikey(privKeyBytes, x, y)){
-			  val s= new Array[Byte](32);
-			  val a= new Array[Byte](32);
-			  if(crypto.signMessage(privKeyBytes, x, y, contentHash, s, a)){
-      			val signBytes = ByteUtil.merge(x,y,Arrays.copyOfRange(sha256Encode(ByteUtil.merge(x,y)), 0, 20),s,a);
-      			return signBytes;
-      		}
-			}
-    }
-    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
-    val ecSig = ECSignatureFactory.getRawInstance(SpongyCastleProvider.getInstance());
-    val prikey = ECKeyFactory
-      .getInstance(SpongyCastleProvider.getInstance())
-      .generatePrivate(new ECPrivateKeySpec(eckey.getPrivKey, ECKey.CURVE_SPEC));
-    ecSig.initSign(prikey);
-    ecSig.update(contentHash);
-    ecSig.sign();
+    enc.ecSign(priKey, contentHash);
   }
 
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
-    if(clibLoad){
-      val pubKeyBytes = Hex.decode(pubKey);
-      val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
-      val y = Arrays.copyOfRange(pubKeyBytes, 32, 64);
-      val s = Arrays.copyOfRange(sign, 84, 116);
-      val a = Arrays.copyOfRange(sign, 116, 148);
-      crypto.verifyMessage(x, y, contentHash, s, a);
-    }else{
-      val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
-      eckey.verify(contentHash, sign);
-    }
+    enc.ecVerify(pubKey, contentHash,sign);
   }
 
   def base64Enc(data: Array[Byte]): String = {
-    Base64.encodeBase64String(data);
+//    Base64.encodeBase64String(data);
+    enc.base64Enc(data);
   }
 
   def base64Dec(str: String): Array[Byte] = {
-    Base64.decodeBase64(str);
+//    Base64.decodeBase64(str);
+    enc.base64Dec(str);
   }
 
   def hexEnc(data: Array[Byte]): String = {
-    Hex.toHexString(data);
+    enc.hexEnc(data)
   }
 
   def hexDec(str: String): Array[Byte] = {
-    Hex.decode(str)
+    enc.hexDec(str)
   }
 
   def ecSignHex(priKey: String, hexHash: String): String = {
-    hexEnc(ecSign(priKey, hexHash.getBytes))
+//    hexEnc(ecSign(priKey, hexHash.getBytes))
+    enc.ecSignHex(priKey, hexHash);
   }
 
   def ecSignHex(priKey: String, hexHash: Array[Byte]): String = {
-    hexEnc(ecSign(priKey, hexHash))
+//    hexEnc(ecSign(priKey, hexHash))
+    enc.ecSignHex(priKey, hexHash);
   }
 
   def ecVerifyHex(pubKey: String, hexHash: String, signhex: String): Boolean = {
-    ecVerify(pubKey, hexDec(hexHash), hexDec(signhex));
+//    ecVerify(pubKey, hexDec(hexHash), hexDec(signhex));
+    enc.ecVerifyHex(pubKey, hexHash, signhex);
   }
   def ecVerifyHex(pubKey: String, hexHash: Array[Byte], signhex: String): Boolean = {
-    ecVerify(pubKey, hexHash, hexDec(signhex));
+    enc.ecVerifyHex(pubKey, hexHash, signhex);
   }
 
-  
-  
   def sha3Encode(content: Array[Byte]): Array[Byte] = {
-  	HashUtil.sha3(content);
+   enc.sha3Encode(content)
   }
   def sha256Encode(content: Array[Byte]): Array[Byte] = {
-  	HashUtil.sha256(content);
+    enc.sha256Encode(content)
   }
-  
-  
-  
-  def ecToKeyBytes(pubKey: String,content: String): String = {
-    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val contentHash = HashUtil.sha256(content.getBytes);
-    val sig = key.doSign(contentHash);
-    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
+
+  def ecToKeyBytes(pubKey: String, content: String): String = {
+    enc.ecToKeyBytes(pubKey,content)
   }
-  
+
   def ecToAddress(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    if(clibLoad){
-      Arrays.copyOfRange(base64Dec(signBase64),64,84);
-    }else{
-      ECKey.signatureToAddress(contentHash, signBase64);
-    }
+   enc.ecToAddress(contentHash, signBase64);
   }
-  
+
   def ecToKeyBytes(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    if(clibLoad){
-      Arrays.copyOfRange(base64Dec(signBase64),0,64);
-    }else{
-      ECKey.signatureToKeyBytes(contentHash, signBase64);
-    }
+    enc.ecToKeyBytes(contentHash, signBase64);
   }
 
 }
