@@ -57,6 +57,8 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   //  }
 
   var enc: EncTrait = JavaEncInstance();
+  
+  @Validate
   def startup() {
     try {
       IPPCrypto.loadLibrary();
