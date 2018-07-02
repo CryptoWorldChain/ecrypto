@@ -36,6 +36,7 @@ import onight.tfw.outils.serialize.SessionIDGenerator
 import org.brewchain.ecrypto.address.AddressFactory
 import org.brewchain.ecrypto.address.AddressEnum;
 import java.util.List
+import org.apache.felix.ipojo.annotations.Validate
 
 @NActorProvider
 @Instantiate(name = "bc_encoder")
@@ -57,6 +58,8 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   //  }
 
   var enc: EncTrait = JavaEncInstance();
+  
+  @Validate
   def startup() {
     try {
       IPPCrypto.loadLibrary();
