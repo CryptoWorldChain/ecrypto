@@ -37,6 +37,9 @@ import org.brewchain.ecrypto.address.AddressFactory
 import org.brewchain.ecrypto.address.AddressEnum;
 import java.util.List
 
+import org.apache.felix.ipojo.annotations.Validate
+
+
 @NActorProvider
 @Instantiate(name = "bc_encoder")
 @Provides(specifications = Array(classOf[ActorService], classOf[EncAPI]), strategy = "SINGLETON")
@@ -57,6 +60,7 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   //  }
 
   var enc: EncTrait = JavaEncInstance();
+  var btc: EncTrait = JavaBtcInstance();
   
   @Validate
   def startup() {
@@ -78,12 +82,16 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   def priKeyToAddress(privKey: String): String = {
     return "";
   }
-
+  
   def genIOTAKeys(seed: String, security: Int, index: Int, checksum: Boolean, total: Int, returnAll: Boolean): List[String] = {
     val newAddr = AddressFactory.create(AddressEnum.IOTA);
     newAddr.newAddress(seed, security, index, checksum, total, returnAll);
   }
 
+  def genBTCKeys(): KeyPairs = {
+    enc.genKeys()
+  };
+  
   def genKeys(): KeyPairs = {
     enc.genKeys()
   };

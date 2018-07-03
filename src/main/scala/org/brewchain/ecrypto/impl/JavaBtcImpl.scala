@@ -2,7 +2,6 @@ package org.brewchain.ecrypto.impl
 
 import java.security.SecureRandom
 
-import org.brewchain.core.crypto.ECKey
 import org.brewchain.core.crypto.HashUtil
 import org.brewchain.core.crypto.jce.ECKeyFactory
 import org.brewchain.core.crypto.jce.ECSignatureFactory
@@ -13,44 +12,48 @@ import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
+import org.brewchain.ecrypto.address.btc.BTCKey
 
-case class JavaEncInstance() extends OLog with BitMap with EncTrait {
+case class JavaBtcInstance() extends OLog with BitMap with EncTrait {
   def genKeys(): KeyPairs = {
     val ran = new SecureRandom();
     //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
-    val eckey = new ECKey(ran);
+    val eckey = new BTCKey(ran);
     val pubstr = Hex.toHexString(eckey.getPubKey);
     val kp = new KeyPairs(
       hexEnc(eckey.getPubKey),
       hexEnc(eckey.getPrivKeyBytes),
-      hexEnc(eckey.getAddress),
+//      hexEnc(eckey.getAddress),
+      "",
       nextUID(pubstr));
     return kp;
   };
   def genKeys(seed: String): KeyPairs = {
-    val eckey = ECKey.fromPrivate(HashUtil.sha3(seed.getBytes()))
+    val eckey = BTCKey.fromPrivate(HashUtil.sha3(seed.getBytes()))
     val pubstr = Hex.toHexString(eckey.getPubKey);
     val kp = new KeyPairs(
       hexEnc(eckey.getPubKey),
       Hex.toHexString(eckey.getPrivKeyBytes),
-      Hex.toHexString(eckey.getAddress),
+//      Hex.toHexString(eckey.getAddress),
+      "",
       nextUID(pubstr));
     return kp
   };
 
   def ecSign(priKey: String, contentHash: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
-    val ecSig = ECSignatureFactory.getRawInstance(SpongyCastleProvider.getInstance());
-    val prikey = ECKeyFactory
-      .getInstance(SpongyCastleProvider.getInstance())
-      .generatePrivate(new ECPrivateKeySpec(eckey.getPrivKey, ECKey.CURVE_SPEC));
-    ecSig.initSign(prikey);
-    ecSig.update(contentHash);
-    ecSig.sign();
+//    val eckey = BTCKey.fromPrivate(Hex.decode(priKey));
+//    val ecSig = ECSignatureFactory.getRawInstance(SpongyCastleProvider.getInstance());
+//    val prikey = ECKeyFactory
+//      .getInstance(SpongyCastleProvider.getInstance())
+//      .generatePrivate(new ECPrivateKeySpec(eckey.getPrivKey, BTCKey.CURVE_SPEC));
+//    ecSig.initSign(prikey);
+//    ecSig.update(contentHash);
+//    ecSig.sign();
+    null
   }
 
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
-    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
+    val eckey = BTCKey.fromPublicOnly(Hex.decode(pubKey));
     eckey.verify(contentHash, sign);
   }
 
@@ -62,10 +65,11 @@ case class JavaEncInstance() extends OLog with BitMap with EncTrait {
   }
 
   def ecToKeyBytes(pubKey: String, content: String): String = {
-    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val contentHash = HashUtil.sha256(content.getBytes);
-    val sig = key.doSign(contentHash);
-    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
+//    val key = BTCKey.fromPublicOnly(pubKey.getBytes);
+//    val contentHash = HashUtil.sha256(content.getBytes);
+//    val sig = key.doSign(contentHash);
+//    hexEnc(BTCKey.signatureToKeyBytes(contentHash, sig));
+    null
   }
 
 }

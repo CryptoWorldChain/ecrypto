@@ -1,41 +1,19 @@
 package org.brewchain.ecrypto.impl
 
 import java.security.SecureRandom
-import java.util.Arrays
 
-import scala.beans.BeanProperty
+import scala.BigInt
 
 import org.apache.commons.codec.binary.Base64
-import org.apache.felix.ipojo.annotations.Instantiate
-import org.apache.felix.ipojo.annotations.Provides
-import org.apache.felix.ipojo.annotations.ServiceProperty
 import org.brewchain.core.crypto.ECIESCoder
 import org.brewchain.core.crypto.ECKey
 import org.brewchain.core.crypto.HashUtil
-import org.brewchain.core.crypto.jce.ECKeyFactory
-import org.brewchain.core.crypto.jce.ECSignatureFactory
-import org.brewchain.core.crypto.jce.SpongyCastleProvider
-import org.brewchain.core.crypto.jni.IPPCrypto
-import org.brewchain.core.util.ByteUtil
-import org.fc.brewchain.bcapi.EncAPI
 import org.fc.brewchain.bcapi.KeyPairs
 import org.fc.brewchain.bcapi.crypto.BCNodeHelper
 import org.fc.brewchain.bcapi.crypto.BitMap
-import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 
-import com.google.protobuf.Message
-
-import onight.oapi.scala.commons.PBUtils
-import onight.oapi.scala.commons.SessionModules
-import onight.oapi.scala.traits.OLog
-import onight.osgi.annotation.NActorProvider
-import onight.tfw.ntrans.api.ActorService
 import onight.tfw.outils.serialize.SessionIDGenerator
-
-import org.brewchain.ecrypto.address.AddressFactory
-import org.brewchain.ecrypto.address.AddressEnum;
-import java.util.List
 trait EncTrait extends BitMap {
   def nextUID(key: String = "BCC2018"): String = {
     //    val id = UUIG.generate()
