@@ -36,6 +36,7 @@ import onight.tfw.outils.serialize.SessionIDGenerator
 import org.brewchain.ecrypto.address.AddressFactory
 import org.brewchain.ecrypto.address.AddressEnum;
 import java.util.List
+import org.apache.felix.ipojo.annotations.Validate
 
 import org.apache.felix.ipojo.annotations.Validate
 
