@@ -1,41 +1,13 @@
 package org.brewchain.ecrypto.impl
 
-import java.security.SecureRandom
 import java.util.Arrays
 
-import scala.beans.BeanProperty
-
-import org.apache.commons.codec.binary.Base64
-import org.apache.felix.ipojo.annotations.Instantiate
-import org.apache.felix.ipojo.annotations.Provides
-import org.apache.felix.ipojo.annotations.ServiceProperty
-import org.brewchain.core.crypto.ECIESCoder
-import org.brewchain.core.crypto.ECKey
-import org.brewchain.core.crypto.HashUtil
-import org.brewchain.core.crypto.jce.ECKeyFactory
-import org.brewchain.core.crypto.jce.ECSignatureFactory
-import org.brewchain.core.crypto.jce.SpongyCastleProvider
 import org.brewchain.core.crypto.jni.IPPCrypto
 import org.brewchain.core.util.ByteUtil
-import org.fc.brewchain.bcapi.EncAPI
 import org.fc.brewchain.bcapi.KeyPairs
-import org.fc.brewchain.bcapi.crypto.BCNodeHelper
-import org.fc.brewchain.bcapi.crypto.BitMap
-import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 
-import com.google.protobuf.Message
-
-import onight.oapi.scala.commons.PBUtils
-import onight.oapi.scala.commons.SessionModules
 import onight.oapi.scala.traits.OLog
-import onight.osgi.annotation.NActorProvider
-import onight.tfw.ntrans.api.ActorService
-import onight.tfw.outils.serialize.SessionIDGenerator
-
-import org.brewchain.ecrypto.address.AddressFactory
-import org.brewchain.ecrypto.address.AddressEnum;
-import java.util.List
 
 case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
   def genKeys(): KeyPairs = {
@@ -82,13 +54,33 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
         val signBytes = ByteUtil.merge(x, y, Arrays.copyOfRange(sha256Encode(ByteUtil.merge(x, y)), 0, 20), s, a);
         signBytes;
       } else {
-        null;
+        var enc: EncTrait = JavaEncInstance();
+        enc.ecSign(priKey, contentHash);
       }
     } else {
-      null;
-    }
+        var enc: EncTrait = JavaEncInstance();
+        enc.ecSign(priKey, contentHash);
+      }
   }
 
+//  def ecToKeyBytes(pubKey: String, content: String): String = {
+//    val key = ECKey.fromPublicOnly(pubKey.getBytes);
+//    val contentHash = HashUtil.sha256(content.getBytes);
+//    val sig = key.doSign(contentHash);
+//    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
+//  }
+  
+  def ecToAddress(contentHash: Array[Byte], sign: String): Array[Byte] = {
+    val signBytes: Array[Byte] =hexDec(sign);
+    Arrays.copyOfRange(signBytes, 64, 84);
+  }
+
+  def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte] = {
+    val signBytes: Array[Byte] =hexDec(sign);
+    Arrays.copyOfRange(signBytes, 0, 64);
+  }
+
+  
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
     val pubKeyBytes = Hex.decode(pubKey);
     val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
@@ -107,13 +99,6 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
     val ret = new Array[Byte](32);
     crypto.bsha256(content, ret);
     ret;
-  }
-
-  def ecToKeyBytes(pubKey: String, content: String): String = {
-    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-    val contentHash = sha256Encode(content.getBytes);
-    val sig = key.doSign(contentHash);
-    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
   }
 
 }

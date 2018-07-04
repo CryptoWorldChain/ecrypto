@@ -82,14 +82,10 @@ trait EncTrait extends BitMap {
   def sha3Encode(content: Array[Byte]): Array[Byte];
   def sha256Encode(content: Array[Byte]): Array[Byte];
 
-  def ecToKeyBytes(pubKey: String, content: String): String;
+//  def ecToKeyBytes(pubKey: String, content: String): String;
 
-  def ecToAddress(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    ECKey.signatureToAddress(contentHash, signBase64);
-  }
+  def ecToAddress(contentHash: Array[Byte], sign: String): Array[Byte];
 
-  def ecToKeyBytes(contentHash: Array[Byte], signBase64: String): Array[Byte] = {
-    ECKey.signatureToKeyBytes(contentHash, signBase64);
-  }
+  def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte];
 
 }

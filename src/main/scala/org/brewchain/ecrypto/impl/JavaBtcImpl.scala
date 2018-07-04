@@ -3,16 +3,12 @@ package org.brewchain.ecrypto.impl
 import java.security.SecureRandom
 
 import org.brewchain.core.crypto.HashUtil
-import org.brewchain.core.crypto.jce.ECKeyFactory
-import org.brewchain.core.crypto.jce.ECSignatureFactory
-import org.brewchain.core.crypto.jce.SpongyCastleProvider
+import org.brewchain.ecrypto.address.btc.BTCKey
 import org.fc.brewchain.bcapi.KeyPairs
 import org.fc.brewchain.bcapi.crypto.BitMap
-import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
-import org.brewchain.ecrypto.address.btc.BTCKey
 
 case class JavaBtcInstance() extends OLog with BitMap with EncTrait {
   def genKeys(): KeyPairs = {
@@ -64,11 +60,19 @@ case class JavaBtcInstance() extends OLog with BitMap with EncTrait {
     HashUtil.sha256(content);
   }
 
-  def ecToKeyBytes(pubKey: String, content: String): String = {
-//    val key = BTCKey.fromPublicOnly(pubKey.getBytes);
-//    val contentHash = HashUtil.sha256(content.getBytes);
-//    val sig = key.doSign(contentHash);
-//    hexEnc(BTCKey.signatureToKeyBytes(contentHash, sig));
+//  def ecToKeyBytes(pubKey: String, content: String): String = {
+////    val key = btckey.frompubliconly(pubkey.getbytes);
+////    val contenthash = hashutil.sha256(content.getbytes);
+////    val sig = key.dosign(contenthash);
+////    hexenc(btckey.signaturetokeybytes(contenthash, sig));
+//    null
+//  }
+  
+  def ecToAddress(contentHash: Array[Byte], sign: String): Array[Byte] = {
+    null
+  }
+
+  def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte] = {
     null
   }
 
