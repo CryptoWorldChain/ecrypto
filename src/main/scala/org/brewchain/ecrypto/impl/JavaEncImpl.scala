@@ -63,6 +63,17 @@ case class JavaEncInstance() extends OLog with BitMap with EncTrait {
     ECKey.signatureToKeyBytes(contentHash, sign);
   }
 
+  def priKeyToKey(privKey: String): KeyPairs = {
+    val eckey = ECKey.fromPrivate(hexDec(privKey));
+    val pubstr = Hex.toHexString(eckey.getPubKey);
+    val kp = new KeyPairs(
+      hexEnc(eckey.getPubKey),
+      hexEnc(eckey.getPrivKeyBytes),
+      hexEnc(eckey.getAddress),
+      nextUID(pubstr));
+    return kp;
+  }
+  
 //  def ecToKeyBytes(pubKey: String, content: String): Array[Byte] = {
 //    val key = btckey.frompubliconly(pubkey.getbytes);
 //    val contenthash = hashutil.sha256(content.getBytes);

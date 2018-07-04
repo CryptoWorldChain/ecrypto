@@ -75,5 +75,9 @@ case class JavaBtcInstance() extends OLog with BitMap with EncTrait {
   def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte] = {
     null
   }
+  
+  def priKeyToKey(privKey: String): KeyPairs = {
+    null
+  }
 
 }

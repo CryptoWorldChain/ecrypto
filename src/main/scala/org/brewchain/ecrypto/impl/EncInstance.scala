@@ -63,8 +63,27 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
 
   override def getModule: String = "BIP"
   override def getCmds: Array[String] = Array("ENC");
+  
   def priKeyToAddress(privKey: String): String = {
-    return "";
+    val key = enc.priKeyToKey(privKey);
+    if(key != null){
+      key.getAddress
+    }else{
+      null
+    }
+  }
+  
+  def priKeyToPubKey(privKey: String): String = {
+    val key = enc.priKeyToKey(privKey);
+    if(key != null){
+      key.getPubkey
+    }else{
+      null
+    }
+  }
+  
+  def priKeyToKey(privKey: String): KeyPairs = {
+    return enc.priKeyToKey(privKey);
   }
   
   def genIOTAKeys(seed: String, security: Int, index: Int, checksum: Boolean, total: Int, returnAll: Boolean): List[String] = {
@@ -146,5 +165,7 @@ class EncInstance extends SessionModules[Message] with BitMap with PBUtils with 
   def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte] = {
     enc.ecToKeyBytes(contentHash, sign);
   }
+  
+  
 
 }

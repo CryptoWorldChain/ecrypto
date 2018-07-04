@@ -88,4 +88,5 @@ trait EncTrait extends BitMap {
 
   def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte];
 
+  def priKeyToKey(privKey: String): KeyPairs;
 }

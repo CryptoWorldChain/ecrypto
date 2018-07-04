@@ -80,8 +80,26 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
     val signBytes: Array[Byte] =hexDec(sign);
     Arrays.copyOfRange(signBytes, 0, 64);
   }
-
   
+  def priKeyToKey(privKey: String): KeyPairs = {
+    val privKeyBytes: Array[Byte] = Hex.decode(privKey);
+    val x = new Array[Byte](32);
+    val y = new Array[Byte](32);
+    if (crypto.fromPrikey(privKeyBytes, x, y)) {
+      val pubKeyByte = ByteUtil.merge(x, y);
+      val pubKey = hexEnc(pubKeyByte);
+      val address = hexEnc(Arrays.copyOfRange(sha256Encode(pubKeyByte), 0, 20));
+      val kp = new KeyPairs(
+        pubKey,
+        privKey,
+        address,
+        nextUID(pubKey));
+      kp;
+    }else{
+      null;
+    }
+  }
+
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
     val pubKeyBytes = Hex.decode(pubKey);
     val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
