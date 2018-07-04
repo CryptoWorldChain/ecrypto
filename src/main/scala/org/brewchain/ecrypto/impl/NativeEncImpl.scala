@@ -8,6 +8,7 @@ import org.fc.brewchain.bcapi.KeyPairs
 import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
+import org.brewchain.ecrypto.impl.JavaEncInstance
 
 case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
   def genKeys(): KeyPairs = {
@@ -87,7 +88,12 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
     val y = Arrays.copyOfRange(pubKeyBytes, 32, 64);
     val s = Arrays.copyOfRange(sign, 84, 116);
     val a = Arrays.copyOfRange(sign, 116, 148);
-    crypto.verifyMessage(x, y, contentHash, s, a);
+    if(crypto.verifyMessage(x, y, contentHash, s, a)){
+      true;
+    }else{
+      var enc: EncTrait = JavaEncInstance();
+      enc.ecVerify(pubKey, contentHash,sign);
+    }
   }
 
   def sha3Encode(content: Array[Byte]): Array[Byte] = {
