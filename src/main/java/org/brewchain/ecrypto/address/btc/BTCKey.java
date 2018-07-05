@@ -567,7 +567,8 @@ public class BTCKey implements EncryptableItem {
             try {
                 // BouncyCastle by default is strict about parsing ASN.1 integers. We relax this check, because some
                 // Bitcoin signatures would not parse.
-                Properties.setThreadOverride("org.spongycastle.asn1.allow_unsafe_integer", true);
+            	// TODO MT 1.54报错，需要1.58
+//                Properties.setThreadOverride("org.spongycastle.asn1.allow_unsafe_integer", true);
                 decoder = new ASN1InputStream(bytes);
                 final ASN1Primitive seqObj = decoder.readObject();
                 if (seqObj == null)
@@ -590,7 +591,8 @@ public class BTCKey implements EncryptableItem {
             } finally {
                 if (decoder != null)
                     try { decoder.close(); } catch (IOException x) {}
-                Properties.removeThreadOverride("org.spongycastle.asn1.allow_unsafe_integer");
+             // TODO MT 1.54报错，需要1.58
+//                Properties.removeThreadOverride("org.spongycastle.asn1.allow_unsafe_integer");
             }
         }
 
