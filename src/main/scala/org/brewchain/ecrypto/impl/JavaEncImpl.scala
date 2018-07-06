@@ -13,6 +13,7 @@ import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
+import java.io.IOException
 
 case class JavaEncInstance() extends OLog with BitMap with EncTrait {
   def genKeys(): KeyPairs = {
@@ -50,8 +51,21 @@ case class JavaEncInstance() extends OLog with BitMap with EncTrait {
   }
 
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
-    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
-    eckey.verify(contentHash, sign);
+    try {
+      val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
+      eckey.verify(contentHash, sign);
+    } catch {
+      case e: IOException =>
+        println(e);
+        false;
+      case e: Exception =>
+        println(e);
+        false;
+      case e: Throwable =>
+        println(e);
+        false;
+      false;
+    }
   }
 
   
