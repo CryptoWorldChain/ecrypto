@@ -59,28 +59,28 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
         enc.ecSign(priKey, contentHash);
       }
     } else {
-        var enc: EncTrait = JavaEncInstance();
-        enc.ecSign(priKey, contentHash);
-      }
+      var enc: EncTrait = JavaEncInstance();
+      enc.ecSign(priKey, contentHash);
+    }
   }
 
-//  def ecToKeyBytes(pubKey: String, content: String): String = {
-//    val key = ECKey.fromPublicOnly(pubKey.getBytes);
-//    val contentHash = HashUtil.sha256(content.getBytes);
-//    val sig = key.doSign(contentHash);
-//    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
-//  }
-  
+  //  def ecToKeyBytes(pubKey: String, content: String): String = {
+  //    val key = ECKey.fromPublicOnly(pubKey.getBytes);
+  //    val contentHash = HashUtil.sha256(content.getBytes);
+  //    val sig = key.doSign(contentHash);
+  //    hexEnc(ECKey.signatureToKeyBytes(contentHash, sig));
+  //  }
+
   def ecToAddress(contentHash: Array[Byte], sign: String): Array[Byte] = {
-    val signBytes: Array[Byte] =hexDec(sign);
+    val signBytes: Array[Byte] = hexDec(sign);
     Arrays.copyOfRange(signBytes, 64, 84);
   }
 
   def ecToKeyBytes(contentHash: Array[Byte], sign: String): Array[Byte] = {
-    val signBytes: Array[Byte] =hexDec(sign);
+    val signBytes: Array[Byte] = hexDec(sign);
     Arrays.copyOfRange(signBytes, 0, 64);
   }
-  
+
   def priKeyToKey(privKey: String): KeyPairs = {
     val privKeyBytes: Array[Byte] = Hex.decode(privKey);
     val x = new Array[Byte](32);
@@ -95,22 +95,25 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
         address,
         nextUID(pubKey));
       kp;
-    }else{
+    } else {
       null;
     }
   }
-
+  val javaEnc: JavaEncInstance = JavaEncInstance();
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
-    val pubKeyBytes = Hex.decode(pubKey);
-    val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
-    val y = Arrays.copyOfRange(pubKeyBytes, 32, 64);
-    val s = Arrays.copyOfRange(sign, 84, 116);
-    val a = Arrays.copyOfRange(sign, 116, 148);
-    if(crypto.verifyMessage(x, y, contentHash, s, a)){
-      true;
-    }else{
-      var enc: EncTrait = JavaEncInstance();
-      enc.ecVerify(pubKey, contentHash,sign);
+    if (pubKey.length() == 128 && sign.length == 148) {
+      val pubKeyBytes = Hex.decode(pubKey);
+      val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
+      val y = Arrays.copyOfRange(pubKeyBytes, 32, 64);
+      val s = Arrays.copyOfRange(sign, 84, 116);
+      val a = Arrays.copyOfRange(sign, 116, 148);
+      if (crypto.verifyMessage(x, y, contentHash, s, a)) {
+        true;
+      } else {
+        javaEnc.ecVerify(pubKey, contentHash, sign);
+      }
+    } else {
+      javaEnc.ecVerify(pubKey, contentHash, sign);
     }
   }
 
