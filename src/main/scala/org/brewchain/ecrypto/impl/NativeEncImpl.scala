@@ -55,12 +55,10 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
         val signBytes = ByteUtil.merge(x, y, Arrays.copyOfRange(sha256Encode(ByteUtil.merge(x, y)), 0, 20), s, a);
         signBytes;
       } else {
-        var enc: EncTrait = JavaEncInstance();
-        enc.ecSign(priKey, contentHash);
+        javaEnc.ecSign(priKey, contentHash);
       }
     } else {
-      var enc: EncTrait = JavaEncInstance();
-      enc.ecSign(priKey, contentHash);
+      javaEnc.ecSign(priKey, contentHash);
     }
   }
 
