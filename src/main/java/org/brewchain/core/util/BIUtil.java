@@ -118,4 +118,5 @@ public class BIUtil {
         long res = (long) a + (long) b;
         return res > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) res;
     }
+    
 }

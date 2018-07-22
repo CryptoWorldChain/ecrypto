@@ -79,7 +79,7 @@ object Test {
     println("jhash3=" + javaEnc.hexEnc(javaEnc.sha3Encode("hash111".getBytes)))
     println("nhash3=" + natiEnc.hexEnc(natiEnc.sha3Encode("hash111".getBytes)))
 
-    val kp=natiEnc.priKeyToKey("09F634B188CEFD98E7EC88B1AA9852D734D0BC272F7D2A47DECC6EBEB375AAD4");
+    val kp=natiEnc.priKeyToKey("29f8a7d7d99253e8a1714e37ac2d95ac058e12fe4bbcfe634d70d443a7b75527");
     println("prikey="+kp.getPrikey)
     println("pubkey="+kp.getPubkey)
     //    println(javaEnc.hexEnc(signbyte));

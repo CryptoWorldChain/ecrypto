@@ -31,7 +31,13 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
     val pk = new Array[Byte](32);
     val x = new Array[Byte](32);
     val y = new Array[Byte](32);
-    crypto.genKeys(sha3Encode(seed.getBytes()), pk, x, y);
+    if (seed.length() != 64) {
+      crypto.genKeys(sha3Encode(seed.getBytes()), pk, x, y);
+    } else {
+      //      crypto.genKeys(Hex.decode(seed), pk, x, y);
+      System.arraycopy(Hex.decode(seed), 0, pk, 0, 32);
+      crypto.fromPrikey(pk, x, y);
+    }
     val pubKeyByte = ByteUtil.merge(x, y);
     val privKey = hexEnc(pk);
     val pubKey = hexEnc(pubKeyByte);
@@ -52,6 +58,8 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
       val s = new Array[Byte](32);
       val a = new Array[Byte](32);
       if (crypto.signMessage(privKeyBytes, x, y, contentHash, s, a)) {
+//        println("s=" + hexEnc(s));
+//        println("a=" + hexEnc(a));
         val signBytes = ByteUtil.merge(x, y, Arrays.copyOfRange(sha256Encode(ByteUtil.merge(x, y)), 0, 20), s, a);
         signBytes;
       } else {
@@ -97,7 +105,7 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
       null;
     }
   }
-  val javaEnc: JavaEncInstance = JavaEncInstance();
+  val javaEnc: JavaEncR1Instance = JavaEncR1Instance();
   def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
     if (pubKey.length() == 128 && sign.length == 148) {
       val pubKeyBytes = Hex.decode(pubKey);
@@ -108,10 +116,25 @@ case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
       if (crypto.verifyMessage(x, y, contentHash, s, a)) {
         true;
       } else {
+        log.debug("using java ecverify:");
+
         javaEnc.ecVerify(pubKey, contentHash, sign);
       }
     } else {
       javaEnc.ecVerify(pubKey, contentHash, sign);
+    }
+  }
+
+  def ecNativeVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
+    if (pubKey.length() == 128 && sign.length == 148) {
+      val pubKeyBytes = Hex.decode(pubKey);
+      val x = Arrays.copyOfRange(pubKeyBytes, 0, 32);
+      val y = Arrays.copyOfRange(pubKeyBytes, 32, 64);
+      val s = Arrays.copyOfRange(sign, 84, 116);
+      val a = Arrays.copyOfRange(sign, 116, 148);
+      crypto.verifyMessage(x, y, contentHash, s, a)
+    } else {
+      false
     }
   }
 

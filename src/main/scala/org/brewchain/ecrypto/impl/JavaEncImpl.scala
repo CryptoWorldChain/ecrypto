@@ -14,9 +14,14 @@ import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
 import java.io.IOException
-
+/**
+ * brew
+ * 
+ * secp256k1 
+ */
 case class JavaEncInstance() extends OLog with BitMap with EncTrait {
   def genKeys(): KeyPairs = {
+    //fuc
     val ran = new SecureRandom();
     //ran.generateSeed(System.currentTimeMillis().asInstanceOf[Int])
     val eckey = new ECKey(ran);
