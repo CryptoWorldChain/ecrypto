@@ -11,37 +11,38 @@ import org.fc.brewchain.bcapi.crypto.BitMap
 import onight.oapi.scala.traits.OLog
 import java.io.IOException
 import java.security.Security
-import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.security.KeyPairGenerator
-import org.bouncycastle.jce.ECNamedCurveTable
+import org.spongycastle.jce.ECNamedCurveTable
 import java.security.interfaces.ECPublicKey
 import java.util.Random
-import org.bouncycastle.util.encoders.Hex
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey
-import org.bouncycastle.util.Arrays
+import org.spongycastle.util.encoders.Hex
+import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey
+import org.spongycastle.util.Arrays
 import java.math.BigInteger
-import org.bouncycastle.crypto.prng.FixedSecureRandom
+import org.spongycastle.crypto.prng.FixedSecureRandom
 import org.brewchain.core.util.EndianHelper
 import java.security.Signature
 import java.security.KeyFactory
-import org.bouncycastle.jce.spec.ECPrivateKeySpec
+import org.spongycastle.jce.spec.ECPrivateKeySpec
 import java.security.interfaces.ECPrivateKey
-import org.bouncycastle.crypto.signers.ECDSASigner
-import org.bouncycastle.crypto.params.ParametersWithRandom
-import org.bouncycastle.crypto.CipherParameters
-import org.bouncycastle.crypto.params.ECKeyParameters
-import org.bouncycastle.jce.spec.ECParameterSpec
-import org.bouncycastle.crypto.params.ECPrivateKeyParameters
-import org.bouncycastle.crypto.params.ECDomainParameters
-import org.bouncycastle.jce.interfaces.ECPublicKey
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
-import org.bouncycastle.jce.spec.ECNamedCurveSpec
-import org.bouncycastle.jce.ECPointUtil
+import org.spongycastle.crypto.signers.ECDSASigner
+import org.spongycastle.crypto.params.ParametersWithRandom
+import org.spongycastle.crypto.CipherParameters
+import org.spongycastle.crypto.params.ECKeyParameters
+import org.spongycastle.jce.spec.ECParameterSpec
+import org.spongycastle.crypto.params.ECPrivateKeyParameters
+import org.spongycastle.crypto.params.ECDomainParameters
+import org.spongycastle.jce.interfaces.ECPublicKey
+import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
+import org.spongycastle.jce.spec.ECNamedCurveSpec
+import org.spongycastle.jce.ECPointUtil
 import org.brewchain.core.util.ByteUtil
-import org.bouncycastle.crypto.params.ECPublicKeyParameters
+import org.spongycastle.crypto.params.ECPublicKeyParameters
 import java.security.spec.ECPoint
-import org.bouncycastle.jce.spec.ECPublicKeySpec
-import org.bouncycastle.math.ec.ECCurve
+import org.spongycastle.jce.spec.ECPublicKeySpec
+import org.spongycastle.math.ec.ECCurve
+import org.brewchain.core.crypto.jce.SpongyCastleProvider
 
 /**
  * brew
@@ -49,10 +50,10 @@ import org.bouncycastle.math.ec.ECCurve
  * secp256k1
  */
 case class JavaEncR1Instance() extends OLog with BitMap with EncTrait {
-  Security.addProvider(new BouncyCastleProvider());
+  Security.addProvider(SpongyCastleProvider.getInstance);
   val ecSpec = ECNamedCurveTable.getParameterSpec("secp256r1");
   def genKeys(): KeyPairs = {
-    val keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
+    val keyGen = KeyPairGenerator.getInstance("ECDSA", "SC");
     keyGen.initialize(ecSpec, new SecureRandom());
     val eckey = keyGen.generateKeyPair();
     val pri = eckey.getPrivate().asInstanceOf[BCECPrivateKey];
@@ -69,7 +70,7 @@ case class JavaEncR1Instance() extends OLog with BitMap with EncTrait {
     return kp;
   };
   def genKeys(seed: String): KeyPairs = {
-    val keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
+    val keyGen = KeyPairGenerator.getInstance("ECDSA", "SC");
     if (seed.getBytes.length != 64) {
       val bytes = new Array[Byte](32);
       val hash = HashUtil.sha256(seed.getBytes);
@@ -108,12 +109,13 @@ case class JavaEncR1Instance() extends OLog with BitMap with EncTrait {
     return kp;
   };
 
-  def ecSign(priKeyStr: String, contentHash: Array[Byte]): Array[Byte] = {
+  def ecSign(priKeyStr: String, vcontentHash: Array[Byte]): Array[Byte] = {
 //    println("content=hash="+hexEnc(contentHash));
     val javaKey = hexEnc(EndianHelper.revert(Hex.decode(priKeyStr)))
+    val contentHash = EndianHelper.revert(vcontentHash);
     val priS = new BigInteger(javaKey, 16);
     val privKeySpec = new ECPrivateKeySpec(priS, ecSpec);
-    val kf = KeyFactory.getInstance("ECDSA","BC");
+    val kf = KeyFactory.getInstance("ECDSA","SC");
     val prikey = kf.generatePrivate(privKeySpec).asInstanceOf[BCECPrivateKey];
     val prikey_restore = hexEnc(EndianHelper.revert(prikey.getS.toByteArray())).substring(0, 64);
     val param = prikey.getParameters; //new ECParameterSpec();
@@ -143,16 +145,17 @@ case class JavaEncR1Instance() extends OLog with BitMap with EncTrait {
     ByteUtil.merge(
       hexDec(hexEnc(EndianHelper.revert(pub.getW.getAffineX.toByteArray())).substring(0, 64)),
       hexDec(hexEnc(EndianHelper.revert(pub.getW.getAffineY.toByteArray())).substring(0, 64)),rand20bytes, 
-      hexDec(hexEnc(s).substring(0,64)), 
+      hexDec(hexEnc(s).substring(0,64)),
       hexDec(hexEnc(a).substring(0,64)));
   }
 
-  def ecVerify(pubKey: String, contentHash: Array[Byte], sign: Array[Byte]): Boolean = {
+  def ecVerify(pubKey: String, vcontentHash: Array[Byte], sign: Array[Byte]): Boolean = {
     try {
       //      val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
       //      eckey.verify(contentHash, sign);
 //      println("content=hash="+hexEnc(contentHash));
       val strsign = hexEnc(sign);
+      val contentHash = EndianHelper.revert(vcontentHash);
       val javaKey_x = EndianHelper.revert(Hex.decode(strsign.substring(0, 64)))
       val javaKey_y = EndianHelper.revert(Hex.decode(strsign.substring(64, 128)))
 //      val s = Arrays.copyOfRange(sign, 84, 116);
@@ -173,8 +176,8 @@ case class JavaEncR1Instance() extends OLog with BitMap with EncTrait {
       val r = EndianHelper.revert(r_byte)
       val s = EndianHelper.revert(s_byte)
 
-      val kf = KeyFactory.getInstance("ECDSA", "BC");
-      val params = new ECNamedCurveSpec("secp256r1", ecSpec.getCurve(), ecSpec.getG(), ecSpec.getN());
+      val kf = KeyFactory.getInstance("ECDSA", "SC");
+//      val params = new ECNamedCurveSpec("secp256r1", ecSpec.getCurve(), ecSpec.getG(), ecSpec.getN());
       val ecpoint = ecSpec.getCurve().createPoint(new BigInteger(hexEnc(javaKey_x), 16), new BigInteger(hexEnc(javaKey_y), 16));
       //      val point = ECPointUtil.decodePoint(params.getCurve(), ByteUtil.merge(javaKey_x,javaKey_y));
       val pubkeySpec = new ECPublicKeySpec(ecpoint, new ECParameterSpec(ecSpec.getCurve(), ecSpec.getG(), ecSpec.getN()));

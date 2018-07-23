@@ -21,7 +21,6 @@ import org.brewchain.core.crypto.jce.ECKeyPairGenerator;
 import org.brewchain.core.crypto.jce.ECSignatureFactory;
 import org.brewchain.core.crypto.jce.SpongyCastleProvider;
 import org.brewchain.core.util.ByteUtil;
-import org.brewchain.ecrypto.address.AddressEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

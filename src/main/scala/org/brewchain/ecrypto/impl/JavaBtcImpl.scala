@@ -6,9 +6,9 @@ import org.brewchain.core.crypto.HashUtil
 import org.brewchain.ecrypto.address.btc.BTCKey
 import org.fc.brewchain.bcapi.KeyPairs
 import org.fc.brewchain.bcapi.crypto.BitMap
-import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
+import org.spongycastle.util.encoders.Hex
 
 case class JavaBtcInstance() extends OLog with BitMap with EncTrait {
   def genKeys(): KeyPairs = {

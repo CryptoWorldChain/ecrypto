@@ -11,9 +11,10 @@ import org.brewchain.core.crypto.HashUtil
 import org.fc.brewchain.bcapi.KeyPairs
 import org.fc.brewchain.bcapi.crypto.BCNodeHelper
 import org.fc.brewchain.bcapi.crypto.BitMap
-import org.spongycastle.util.encoders.Hex
 
 import onight.tfw.outils.serialize.SessionIDGenerator
+import org.spongycastle.util.encoders.Hex
+
 trait EncTrait extends BitMap {
   def nextUID(key: String = "BCC2018"): String = {
     //    val id = UUIG.generate()
@@ -22,7 +23,8 @@ trait EncTrait extends BitMap {
     val eckey = new ECKey(ran);
     val encby = HashUtil.ripemd160(eckey.getPubKey);
     //    println("hex=" + Hex.toHexString(encby))
-    val i = BigInt(Hex.toHexString(encby), 16)
+    val i = BigInt(Hex
+        .toHexString(encby), 16)
     //    println("i=" + i)
     val id = hexToMapping(i)
     val mix = BCNodeHelper.mixStr(id, key);

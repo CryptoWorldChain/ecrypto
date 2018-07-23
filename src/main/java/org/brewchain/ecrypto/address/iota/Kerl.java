@@ -1,9 +1,10 @@
 package org.brewchain.ecrypto.address.iota;
 
-import org.bouncycastle.jcajce.provider.digest.Keccak;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.spongycastle.jcajce.provider.digest.Keccak;
 
 public class Kerl extends JCurl {
 

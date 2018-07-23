@@ -12,3 +12,4 @@ conf/startup.properties
 odb.*
 logs
 .cache*
+/bin2/

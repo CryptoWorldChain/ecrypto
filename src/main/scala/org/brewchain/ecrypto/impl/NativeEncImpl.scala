@@ -8,14 +8,13 @@ import org.fc.brewchain.bcapi.KeyPairs
 import org.spongycastle.util.encoders.Hex
 
 import onight.oapi.scala.traits.OLog
-import org.brewchain.ecrypto.impl.JavaEncInstance
 
 case class NativeEncInstance(crypto: IPPCrypto) extends OLog with EncTrait {
   def genKeys(): KeyPairs = {
     val pk = new Array[Byte](32);
     val x = new Array[Byte](32);
     val y = new Array[Byte](32);
-    crypto.genKeys(null, pk, x, y);
+    crypto.genKeys(null, pk, x, y); 
     val pubKeyByte = ByteUtil.merge(x, y);
     val privKey = hexEnc(pk);
     val pubKey = hexEnc(pubKeyByte);
