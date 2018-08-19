@@ -13,7 +13,7 @@ import org.fc.brewchain.bcapi.crypto.BCNodeHelper
 import org.fc.brewchain.bcapi.crypto.BitMap
 
 import onight.tfw.outils.serialize.SessionIDGenerator
-import org.spongycastle.util.encoders.Hex
+import org.apache.commons.codec.binary.Hex
 
 trait EncTrait extends BitMap {
   def nextUID(key: String = "BCC2018"): String = {
@@ -23,8 +23,7 @@ trait EncTrait extends BitMap {
     val eckey = new ECKey(ran);
     val encby = HashUtil.ripemd160(eckey.getPubKey);
     //    println("hex=" + Hex.toHexString(encby))
-    val i = BigInt(Hex
-        .toHexString(encby), 16)
+    val i = BigInt(Hex.encodeHexString(encby), 16)
     //    println("i=" + i)
     val id = hexToMapping(i)
     val mix = BCNodeHelper.mixStr(id, key);
@@ -32,13 +31,13 @@ trait EncTrait extends BitMap {
   }
 
   def ecEncode(pubKey: String, content: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPublicOnly(Hex.decode(pubKey));
+    val eckey = ECKey.fromPublicOnly(Hex.decodeHex(pubKey.toCharArray()));
     val encBytes = ECIESCoder.encrypt(eckey.getPubKeyPoint, content);
     encBytes;
   }
 
   def ecDecode(priKey: String, content: Array[Byte]): Array[Byte] = {
-    val eckey = ECKey.fromPrivate(Hex.decode(priKey));
+    val eckey = ECKey.fromPrivate(Hex.decodeHex(priKey.toCharArray));
     val orgBytes = ECIESCoder.decrypt(eckey.getPrivKey, content);
     orgBytes;
   }
@@ -59,11 +58,11 @@ trait EncTrait extends BitMap {
   }
 
   def hexEnc(data: Array[Byte]): String = {
-    Hex.toHexString(data);
+    Hex.encodeHexString(data);
   }
 
   def hexDec(str: String): Array[Byte] = {
-    Hex.decode(str)
+    Hex.decodeHex(str.toCharArray())
   }
 
   def ecSignHex(priKey: String, hexHash: String): String = {
