@@ -1,10 +1,9 @@
 package org.brewchain.ecrypto.sm;
 
-import org.apache.commons.codec.binary.Base64;
-import org.brewchain.core.crypto.ECKey;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Email: king.camulos@gmail.com Date: 2018/4/3 DESC:
@@ -17,7 +16,7 @@ public class SM4Utils {
 	public SM4Utils() {
 	}
 
-	public String encryptData_ECB(String plainText) {
+	protected String encryptData_ECB(String plainText) {
 		try {
 			SM4_Context ctx = new SM4_Context();
 			ctx.isPadding = true;
@@ -47,7 +46,7 @@ public class SM4Utils {
 		}
 	}
 
-	public String decryptData_ECB(String cipherText) {
+	protected String decryptData_ECB(String cipherText) {
 		try {
 			SM4_Context ctx = new SM4_Context();
 			ctx.isPadding = true;
@@ -70,7 +69,7 @@ public class SM4Utils {
 		}
 	}
 
-	public String encryptData_CBC(String plainText) {
+	protected String encryptData_CBC(String plainText) {
 		try {
 			SM4_Context ctx = new SM4_Context();
 			ctx.isPadding = true;
@@ -102,7 +101,7 @@ public class SM4Utils {
 		}
 	}
 
-	public String decryptData_CBC(String cipherText) {
+	protected String decryptData_CBC(String cipherText) {
 		try {
 			SM4_Context ctx = new SM4_Context();
 			ctx.isPadding = true;
@@ -128,56 +127,41 @@ public class SM4Utils {
 		}
 	}
 
-	public static void main(String[] args) {
-		String plainText = "beijinG";
-
+	/** 加密ECB */
+	public static String getEncStrECB(String inputStr, String secretKey) {
 		SM4Utils sm4 = new SM4Utils();
-		// meF8U9wHFOMfs2Y9
-		sm4.secretKey = "meF8U9wHFOMfs2Y9"; // meF8U9wHFOMfs2Y9
+		sm4.secretKey = secretKey;
 		sm4.hexString = false;
-
-		System.out.println("ECB模式");
-		String cipherText = sm4.encryptData_ECB(plainText);
-		System.out.println("密文: " + cipherText);
-		System.out.println("");
-
-		plainText = sm4.decryptData_ECB(cipherText);
-		System.out.println("明文: " + plainText);
-		System.out.println("");
-
-		System.out.println("CBC模式");
-		sm4.iv = "UISwD9fW6cFh9SNS";
-		cipherText = sm4.encryptData_CBC(plainText);
-		System.out.println("密文: " + cipherText);
-		System.out.println("");
-
-		plainText = sm4.decryptData_CBC(cipherText);
-		System.out.println("明文: " + plainText);
-		ECKey ecKey = new ECKey();
-		// 签名
-		// org.fc.brewchain.bcapi.crypto.EncHelper.ecSign()
-		// 验签
-		// org.fc.brewchain.bcapi.crypto.EncHelper.ecSign()
-	}
-
-	/** 加密 */
-	public String getEncStr(String inputStr, String secretKey) {
-		SM4Utils sm4 = new SM4Utils();
-		sm4.secretKey = secretKey; // meF8U9wHFOMfs2Y9
-		sm4.hexString = false;
-
-		System.out.println("ECB模式");
 		String cipherText = sm4.encryptData_ECB(inputStr);
-		System.out.println("ECB模式");
 		return cipherText;
 	}
 
-	/** 解密 */
-	public String getDecStr(String inputStr, String secretKey) {
+	/** 解密ECB */
+	public static String getDecStrECB(String inputStr, String secretKey) {
 		SM4Utils sm4Util = new SM4Utils();
-		sm4Util.secretKey = secretKey; // meF8U9wHFOMfs2Y9
+		sm4Util.secretKey = secretKey;
 		sm4Util.hexString = false;
 		String plainText = sm4Util.decryptData_ECB(inputStr);
 		return plainText;
 	}
+	/** 加密CBC */
+	public static String getEncStrCBC(String inputStr, String secretKey, String iv) {
+		SM4Utils sm4 = new SM4Utils();
+		sm4.secretKey = secretKey;
+		sm4.iv = iv;
+		sm4.hexString = false;
+		String cipherText = sm4.encryptData_CBC(inputStr);
+		return cipherText;
+	}
+
+	/** 解密CBC */
+	public static String getDecStrCBC(String inputStr, String secretKey, String iv) {
+		SM4Utils sm4Util = new SM4Utils();
+		sm4Util.secretKey = secretKey;
+		sm4Util.iv = iv;
+		sm4Util.hexString = false;
+		String plainText = sm4Util.decryptData_CBC(inputStr);
+		return plainText;
+	}
+	
 }
